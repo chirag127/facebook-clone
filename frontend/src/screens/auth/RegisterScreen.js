@@ -40,7 +40,7 @@ const RegisterScreen = ({ navigation }) => {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.logoContainer}>
                     <Image
-                        source={require("../../../assets/facebook-logo.png")}
+                        source={require("../../../assets/facebook-logo.svg")}
                         style={styles.logo}
                         resizeMode="contain"
                     />
