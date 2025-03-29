@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { AuthContext } from "../../context/AuthContext";
 import { FACEBOOK_LOGO } from "../../utils/constants";
+import TestComponent from "../../components/TestComponent";
 
 const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState("");
@@ -92,6 +93,8 @@ const LoginScreen = ({ navigation }) => {
                             Create New Account
                         </Text>
                     </TouchableOpacity>
+
+                    <TestComponent />
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>

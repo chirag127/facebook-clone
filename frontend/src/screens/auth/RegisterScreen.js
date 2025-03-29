@@ -102,7 +102,7 @@ const RegisterScreen = ({ navigation }) => {
 
                     <View style={styles.loginContainer}>
                         <Text style={styles.loginText}>
-                            Already have an account?{" "}
+                            Already have an account?
                         </Text>
                         <TouchableOpacity
                             onPress={() => navigation.navigate("Login")}

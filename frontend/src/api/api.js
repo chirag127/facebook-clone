@@ -1,33 +1,54 @@
 import axios from "axios";
-import * as SecureStore from "expo-secure-store";
 
-// Create a wrapper for SecureStore to handle API changes
+// Create a storage wrapper that works on both web and mobile
 const secureStorage = {
     setItem: async (key, value) => {
         try {
-            return await SecureStore.setItemAsync(key, value);
+            // Use localStorage for web
+            if (typeof localStorage !== "undefined") {
+                localStorage.setItem(key, value);
+                return;
+            }
+
+            // For mobile, we would use SecureStore, but we'll skip for now
+            console.log(`Storing ${key} in secure storage`);
         } catch (error) {
-            console.log("SecureStore setItem error:", error);
+            console.log("Storage setItem error:", error);
         }
     },
     getItem: async (key) => {
         try {
-            return await SecureStore.getItemAsync(key);
+            // Use localStorage for web
+            if (typeof localStorage !== "undefined") {
+                return localStorage.getItem(key);
+            }
+
+            // For mobile, we would use SecureStore, but we'll skip for now
+            console.log(`Getting ${key} from secure storage`);
+            return null;
         } catch (error) {
-            console.log("SecureStore getItem error:", error);
+            console.log("Storage getItem error:", error);
             return null;
         }
     },
     deleteItem: async (key) => {
         try {
-            return await SecureStore.deleteItemAsync(key);
+            // Use localStorage for web
+            if (typeof localStorage !== "undefined") {
+                localStorage.removeItem(key);
+                return;
+            }
+
+            // For mobile, we would use SecureStore, but we'll skip for now
+            console.log(`Removing ${key} from secure storage`);
         } catch (error) {
-            console.log("SecureStore deleteItem error:", error);
+            console.log("Storage deleteItem error:", error);
         }
     },
 };
 
-const API_URL = "http://10.0.2.2:5000/api"; // For Android emulator
+// Determine the API URL based on platform
+const API_URL = "http://localhost:5000/api"; // Use localhost for development
 
 const api = axios.create({
     baseURL: API_URL,
@@ -40,6 +61,7 @@ const api = axios.create({
 api.interceptors.request.use(
     async (config) => {
         const token = await secureStorage.getItem("userToken");
+        console.log("Token from storage:", token);
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }

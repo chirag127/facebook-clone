@@ -44,6 +44,15 @@ app.get("/", (req, res) => {
     res.send("Facebook Clone API is running...");
 });
 
+// Test endpoint that doesn't require authentication
+app.get("/api/test", (req, res) => {
+    res.json({
+        success: true,
+        message: "API test endpoint is working!",
+        timestamp: new Date().toISOString(),
+    });
+});
+
 // Error handler middleware
 app.use(errorHandler);
 
