@@ -1,4 +1,7 @@
 import axios from "axios";
+// Determine the API URL based on platform
+// const API_URL = "http://localhost:5000/api"; // Use localhost for development
+const API_URL = "https://facebook-clone-qf4b.onrender.com/api"; // Use production URL for deployment
 
 // Create a storage wrapper that works on both web and mobile
 const secureStorage = {
@@ -47,8 +50,6 @@ const secureStorage = {
     },
 };
 
-// Determine the API URL based on platform
-const API_URL = "http://localhost:5000/api"; // Use localhost for development
 
 const api = axios.create({
     baseURL: API_URL,

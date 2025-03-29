@@ -2,6 +2,10 @@
 
 A full-stack Facebook clone built with React Native for the frontend and Node.js/Express/MongoDB for the backend.
 
+## demo
+
+https://astounding-maamoul-c801f9.netlify.app
+
 ## Features
 
 -   User authentication (register, login, logout)
