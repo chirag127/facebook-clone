@@ -8,6 +8,7 @@ import {
     Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { DEFAULT_PROFILE_IMAGE } from "../utils/constants";
 import { likeComment, unlikeComment, deleteComment } from "../api/api";
 
 const CommentItem = ({ comment, currentUserId, onRefresh }) => {
@@ -67,9 +68,7 @@ const CommentItem = ({ comment, currentUserId, onRefresh }) => {
         <View style={styles.container}>
             <Image
                 source={{
-                    uri:
-                        comment.user.profilePicture ||
-                        "https://via.placeholder.com/150",
+                    uri: comment.user.profilePicture || DEFAULT_PROFILE_IMAGE,
                 }}
                 style={styles.profilePic}
             />

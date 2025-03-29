@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { DEFAULT_PROFILE_IMAGE } from "../utils/constants";
 
 const CreatePostModal = ({ visible, onClose, onCreatePost, user }) => {
     const [postText, setPostText] = useState("");
@@ -93,7 +94,7 @@ const CreatePostModal = ({ visible, onClose, onCreatePost, user }) => {
                             source={{
                                 uri:
                                     user?.profilePicture ||
-                                    "https://via.placeholder.com/150",
+                                    DEFAULT_PROFILE_IMAGE,
                             }}
                             style={styles.profilePic}
                         />

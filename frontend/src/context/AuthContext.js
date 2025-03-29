@@ -30,7 +30,11 @@ import axios from "axios";
 
 export const AuthContext = createContext();
 
-const API_URL = "http://10.0.2.2:5000/api"; // For Android emulator
+// const API_URL = "http://10.0.2.2:5000/api"; // For Android emulator
+
+// const API_URL = "http://localhost:5000/api"; // For iOS simulator or physical device
+
+const API_URL =  "http://192.168.31.232:5000/api";
 
 export const AuthProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(false);

@@ -13,6 +13,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
 import { getPosts, createPost, likePost, unlikePost } from "../api/api";
+import { DEFAULT_PROFILE_IMAGE } from "../utils/constants";
 import PostItem from "../components/PostItem";
 import CreatePostModal from "../components/CreatePostModal";
 
@@ -72,9 +73,7 @@ const HomeScreen = ({ navigation }) => {
             <View style={styles.createPostContainer}>
                 <Image
                     source={{
-                        uri:
-                            userInfo?.profilePicture ||
-                            "https://via.placeholder.com/150",
+                        uri: userInfo?.profilePicture || DEFAULT_PROFILE_IMAGE,
                     }}
                     style={styles.profilePic}
                 />

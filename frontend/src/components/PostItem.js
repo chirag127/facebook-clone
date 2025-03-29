@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { DEFAULT_PROFILE_IMAGE } from "../utils/constants";
 
 const PostItem = ({
     post,
@@ -27,7 +28,7 @@ const PostItem = ({
                         source={{
                             uri:
                                 post.user.profilePicture ||
-                                "https://via.placeholder.com/150",
+                                DEFAULT_PROFILE_IMAGE,
                         }}
                         style={styles.profilePic}
                     />
