@@ -151,7 +151,8 @@ exports.deleteComment = async (req, res, next) => {
             await post.save();
         }
 
-        await comment.remove();
+        // Delete the comment
+        await Comment.findByIdAndDelete(comment._id);
 
         res.status(200).json({
             success: true,

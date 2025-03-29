@@ -1,0 +1,3 @@
+@echo off
+echo Starting Facebook Clone Frontend...
+npm start

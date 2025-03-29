@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { protect } = require("../middleware/auth");
+const upload = require("../middleware/upload");
 const {
     getPosts,
     getPost,
@@ -11,12 +12,15 @@ const {
     unlikePost,
 } = require("../controllers/posts");
 
-router.route("/").get(protect, getPosts).post(protect, createPost);
+router
+    .route("/")
+    .get(protect, getPosts)
+    .post(protect, upload.single("image"), createPost);
 
 router
     .route("/:id")
     .get(protect, getPost)
-    .put(protect, updatePost)
+    .put(protect, upload.single("image"), updatePost)
     .delete(protect, deletePost);
 
 router.put("/:id/like", protect, likePost);

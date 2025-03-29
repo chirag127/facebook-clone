@@ -27,7 +27,37 @@ api.interceptors.request.use(
 // Posts API
 export const getPosts = () => api.get("/posts");
 export const getPost = (id) => api.get(`/posts/${id}`);
-export const createPost = (postData) => api.post("/posts", postData);
+export const createPost = (postData) => {
+    // If postData contains an image URI, create FormData
+    if (
+        postData.image &&
+        typeof postData.image === "string" &&
+        postData.image.startsWith("file://")
+    ) {
+        const formData = new FormData();
+        formData.append("text", postData.text);
+
+        // Append image file
+        const filename = postData.image.split("/").pop();
+        const match = /\.([\w]+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : "image";
+
+        formData.append("image", {
+            uri: postData.image,
+            name: filename,
+            type,
+        });
+
+        return api.post("/posts", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+    }
+
+    // Regular JSON post
+    return api.post("/posts", postData);
+};
 export const updatePost = (id, postData) => api.put(`/posts/${id}`, postData);
 export const deletePost = (id) => api.delete(`/posts/${id}`);
 export const likePost = (id) => api.put(`/posts/${id}/like`);
@@ -46,10 +76,62 @@ export const unlikeComment = (id) => api.put(`/comments/${id}/unlike`);
 // User API
 export const getUsers = () => api.get("/users");
 export const getUser = (id) => api.get(`/users/${id}`);
-export const updateProfilePicture = (imageUrl) =>
-    api.put("/users/profile-picture", { profilePicture: imageUrl });
-export const updateCoverPhoto = (imageUrl) =>
-    api.put("/users/cover-photo", { coverPhoto: imageUrl });
+export const searchUsers = (query) => api.get(`/users/search?query=${query}`);
+
+export const updateProfilePicture = (imageUri) => {
+    // If it's a local file URI, create FormData
+    if (typeof imageUri === "string" && imageUri.startsWith("file://")) {
+        const formData = new FormData();
+
+        // Append image file
+        const filename = imageUri.split("/").pop();
+        const match = /\.([\w]+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : "image";
+
+        formData.append("profilePicture", {
+            uri: imageUri,
+            name: filename,
+            type,
+        });
+
+        return api.put("/users/profile-picture", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+    }
+
+    // Regular JSON update with URL
+    return api.put("/users/profile-picture", { profilePicture: imageUri });
+};
+
+export const updateCoverPhoto = (imageUri) => {
+    // If it's a local file URI, create FormData
+    if (typeof imageUri === "string" && imageUri.startsWith("file://")) {
+        const formData = new FormData();
+
+        // Append image file
+        const filename = imageUri.split("/").pop();
+        const match = /\.([\w]+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : "image";
+
+        formData.append("coverPhoto", {
+            uri: imageUri,
+            name: filename,
+            type,
+        });
+
+        return api.put("/users/cover-photo", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+    }
+
+    // Regular JSON update with URL
+    return api.put("/users/cover-photo", { coverPhoto: imageUri });
+};
+
 export const updateUserDetails = (userData) =>
     api.put("/auth/updatedetails", userData);
 export const updatePassword = (passwordData) =>

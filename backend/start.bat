@@ -1,0 +1,3 @@
+@echo off
+echo Starting Facebook Clone Backend Server...
+npm run dev

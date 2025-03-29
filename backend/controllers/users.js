@@ -40,16 +40,62 @@ exports.getUser = async (req, res, next) => {
     }
 };
 
+// @desc    Search users
+// @route   GET /api/users/search
+// @access  Private
+exports.searchUsers = async (req, res, next) => {
+    try {
+        const { query } = req.query;
+
+        if (!query) {
+            return res.status(400).json({
+                success: false,
+                error: "Please provide a search query",
+            });
+        }
+
+        const users = await User.find({
+            $or: [
+                { name: { $regex: query, $options: "i" } },
+                { email: { $regex: query, $options: "i" } },
+            ],
+            _id: { $ne: req.user.id }, // Exclude current user
+        }).select("-password");
+
+        res.status(200).json({
+            success: true,
+            count: users.length,
+            data: users,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 // @desc    Update profile picture
 // @route   PUT /api/users/profile-picture
 // @access  Private
 exports.updateProfilePicture = async (req, res, next) => {
     try {
-        // In a real app, you would handle file upload here
-        // For simplicity, we're just updating the URL
+        let profilePicture = req.body.profilePicture;
+
+        // If file was uploaded
+        if (req.file) {
+            // Create URL for the uploaded file
+            const baseUrl = `${req.protocol}://${req.get("host")}`;
+            profilePicture = `${baseUrl}/uploads/${req.file.filename}`;
+        }
+
+        if (!profilePicture) {
+            return res.status(400).json({
+                success: false,
+                error: "Please provide a profile picture URL or upload an image",
+            });
+        }
+
         const user = await User.findByIdAndUpdate(
             req.user.id,
-            { profilePicture: req.body.profilePicture },
+            { profilePicture },
             { new: true, runValidators: true }
         );
 
@@ -67,11 +113,25 @@ exports.updateProfilePicture = async (req, res, next) => {
 // @access  Private
 exports.updateCoverPhoto = async (req, res, next) => {
     try {
-        // In a real app, you would handle file upload here
-        // For simplicity, we're just updating the URL
+        let coverPhoto = req.body.coverPhoto;
+
+        // If file was uploaded
+        if (req.file) {
+            // Create URL for the uploaded file
+            const baseUrl = `${req.protocol}://${req.get("host")}`;
+            coverPhoto = `${baseUrl}/uploads/${req.file.filename}`;
+        }
+
+        if (!coverPhoto) {
+            return res.status(400).json({
+                success: false,
+                error: "Please provide a cover photo URL or upload an image",
+            });
+        }
+
         const user = await User.findByIdAndUpdate(
             req.user.id,
-            { coverPhoto: req.body.coverPhoto },
+            { coverPhoto },
             { new: true, runValidators: true }
         );
 

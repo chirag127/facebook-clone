@@ -1,5 +1,6 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
+const Comment = require("../models/Comment");
 
 // @desc    Get all posts
 // @route   GET /api/posts
@@ -65,11 +66,24 @@ exports.createPost = async (req, res, next) => {
         // Add user to req.body
         req.body.user = req.user.id;
 
+        // If file was uploaded
+        if (req.file) {
+            // Create URL for the uploaded file
+            const baseUrl = `${req.protocol}://${req.get("host")}`;
+            req.body.image = `${baseUrl}/uploads/${req.file.filename}`;
+        }
+
         const post = await Post.create(req.body);
+
+        // Populate user info for the response
+        const populatedPost = await Post.findById(post._id).populate({
+            path: "user",
+            select: "name profilePicture",
+        });
 
         res.status(201).json({
             success: true,
-            data: post,
+            data: populatedPost,
         });
     } catch (err) {
         next(err);
@@ -134,7 +148,11 @@ exports.deletePost = async (req, res, next) => {
             });
         }
 
-        await post.remove();
+        // Delete all comments associated with the post
+        await Comment.deleteMany({ post: post._id });
+
+        // Delete the post
+        await Post.findByIdAndDelete(post._id);
 
         res.status(200).json({
             success: true,
