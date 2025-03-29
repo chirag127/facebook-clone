@@ -50,7 +50,6 @@ const secureStorage = {
     },
 };
 
-
 const api = axios.create({
     baseURL: API_URL,
     headers: {
@@ -189,6 +188,7 @@ export const updatePassword = (passwordData) =>
 // Friends API
 export const getFriends = () => api.get("/friends");
 export const getFriendRequests = () => api.get("/friends/requests");
+export const getSuggestedFriends = () => api.get("/users/suggested");
 export const sendFriendRequest = (userId) =>
     api.post(`/friends/request/${userId}`);
 export const acceptFriendRequest = (userId) =>

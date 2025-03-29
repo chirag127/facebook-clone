@@ -255,7 +255,7 @@ const HelpScreen = ({ navigation }) => {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+            </View>
             )}
         </TouchableOpacity>
     );
@@ -278,15 +278,15 @@ const HelpScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.searchContainer}>
+                <View style={styles.searchContainer}>
                 <Ionicons
                     name="search"
                     size={20}
                     color="#8A8D91"
                     style={styles.searchIcon}
                 />
-                <TextInput
-                    style={styles.searchInput}
+                        <TextInput
+                            style={styles.searchInput}
                     placeholder="Search for help topics..."
                     value={searchQuery}
                     onChangeText={handleSearch}
@@ -304,7 +304,7 @@ const HelpScreen = ({ navigation }) => {
                         />
                     </TouchableOpacity>
                 )}
-            </View>
+                </View>
 
             <View style={styles.categoriesContainer}>
                 <FlatList
@@ -315,7 +315,7 @@ const HelpScreen = ({ navigation }) => {
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.categoriesList}
                 />
-            </View>
+                </View>
 
             <View style={styles.contentContainer}>
                 {filteredFaqs.length > 0 ? (
@@ -335,7 +335,7 @@ const HelpScreen = ({ navigation }) => {
                         />
                         <Text style={styles.noResultsText}>
                             No results found for "{searchQuery}"
-                        </Text>
+                    </Text>
                         <Text style={styles.noResultsSubtext}>
                             Try different keywords or browse the categories
                         </Text>
@@ -345,9 +345,9 @@ const HelpScreen = ({ navigation }) => {
                         >
                             <Text style={styles.contactSupportText}>
                                 Contact Support
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                        </Text>
+                    </TouchableOpacity>
+                </View>
                 )}
             </View>
 

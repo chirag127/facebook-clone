@@ -364,11 +364,11 @@ const GroupsScreen = ({ navigation }) => {
                             ]
                         );
                     } else {
-                        Alert.alert(
+                    Alert.alert(
                             "Join Group",
                             `Would you like to join ${item.name}?`,
-                            [
-                                { text: "Cancel", style: "cancel" },
+                        [
+                            { text: "Cancel", style: "cancel" },
                                 {
                                     text: "Join",
                                     onPress: () => {
@@ -417,12 +417,12 @@ const GroupsScreen = ({ navigation }) => {
                             color="#1877F2"
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity
+                <TouchableOpacity
                         style={styles.headerButton}
                         onPress={() => setSearchVisible(true)}
-                    >
-                        <Ionicons name="search" size={24} color="#1877F2" />
-                    </TouchableOpacity>
+                >
+                    <Ionicons name="search" size={24} color="#1877F2" />
+                </TouchableOpacity>
                 </View>
             </View>
 

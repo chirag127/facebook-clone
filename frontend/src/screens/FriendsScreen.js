@@ -20,6 +20,7 @@ import {
     acceptFriendRequest,
     rejectFriendRequest,
     removeFriend,
+    getSuggestedFriends,
 } from "../api/api";
 import { DEFAULT_PROFILE_IMAGE } from "../utils/constants";
 
@@ -45,17 +46,19 @@ const FriendsScreen = ({ navigation }) => {
             if (activeTab === "friends") {
                 const friendsResponse = await getFriends();
                 setFriends(friendsResponse.data.data || []);
-                // TODO: Implement API for suggested friends if available
-                setSuggestedFriends([]); // Clear suggested for now
             } else if (activeTab === "requests") {
                 const requestsResponse = await getFriendRequests();
                 setFriendRequests(requestsResponse.data.data || []);
             } else if (activeTab === "suggested") {
-                // TODO: Implement API for suggested friends if available
-                setSuggestedFriends([]); // Clear suggested for now
+                const suggestedResponse = await getSuggestedFriends();
+                setSuggestedFriends(suggestedResponse.data.data || []);
             }
         } catch (error) {
             console.log(`Error fetching ${activeTab}:`, error);
+            Alert.alert(
+                "Error",
+                `Failed to fetch ${activeTab}. Please try again.`
+            );
         } finally {
             setLoading(false);
         }
@@ -84,14 +87,11 @@ const FriendsScreen = ({ navigation }) => {
                         style: "destructive",
                         onPress: async () => {
                             await rejectFriendRequest(userId);
-                            Alert.alert(
-                                "Success",
-                                "Friend request deleted"
-                            );
+                            Alert.alert("Success", "Friend request deleted");
                             // Refetch data to update lists
                             fetchData();
-                        }
-                    }
+                        },
+                    },
                 ]
             );
         } catch (error) {
@@ -116,7 +116,10 @@ const FriendsScreen = ({ navigation }) => {
                                 "Friend removed successfully"
                             );
                             // Close modal if open
-                            if (showProfileModal && selectedFriend?._id === userId) {
+                            if (
+                                showProfileModal &&
+                                selectedFriend?._id === userId
+                            ) {
                                 setShowProfileModal(false);
                             }
                             // Refetch data to update lists
@@ -145,14 +148,16 @@ const FriendsScreen = ({ navigation }) => {
 
     const handleSendFriendRequest = (userId) => {
         // Find the suggested friend
-        const friend = suggestedFriends.find(f => f._id === userId);
+        const friend = suggestedFriends.find((f) => f._id === userId);
         if (friend) {
             Alert.alert(
                 "Friend Request Sent",
                 `Your friend request to ${friend.name} has been sent!`
             );
             // Remove from suggestions
-            setSuggestedFriends(suggestedFriends.filter(f => f._id !== userId));
+            setSuggestedFriends(
+                suggestedFriends.filter((f) => f._id !== userId)
+            );
         }
     };
 
@@ -162,18 +167,21 @@ const FriendsScreen = ({ navigation }) => {
     };
 
     const filteredFriends = searchText
-        ? friends.filter(friend =>
-            friend.name.toLowerCase().includes(searchText.toLowerCase()))
+        ? friends.filter((friend) =>
+              friend.name.toLowerCase().includes(searchText.toLowerCase())
+          )
         : friends;
 
     const filteredRequests = searchText
-        ? friendRequests.filter(request =>
-            request.name.toLowerCase().includes(searchText.toLowerCase()))
+        ? friendRequests.filter((request) =>
+              request.name.toLowerCase().includes(searchText.toLowerCase())
+          )
         : friendRequests;
 
     const filteredSuggestions = searchText
-        ? suggestedFriends.filter(suggestion =>
-            suggestion.name.toLowerCase().includes(searchText.toLowerCase()))
+        ? suggestedFriends.filter((suggestion) =>
+              suggestion.name.toLowerCase().includes(searchText.toLowerCase())
+          )
         : suggestedFriends;
 
     const renderFriendItem = ({ item }) => (
@@ -204,8 +212,11 @@ const FriendsScreen = ({ navigation }) => {
                                 { text: "Cancel", style: "cancel" },
                                 {
                                     text: "Open Chat",
-                                    onPress: () => navigation.navigate("Messenger", { contactId: item._id })
-                                }
+                                    onPress: () =>
+                                        navigation.navigate("Messenger", {
+                                            contactId: item._id,
+                                        }),
+                                },
                             ]
                         );
                     }}
@@ -292,7 +303,11 @@ const FriendsScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.requestButton, styles.rejectButton]}
-                    onPress={() => setSuggestedFriends(suggestedFriends.filter(f => f._id !== item._id))}
+                    onPress={() =>
+                        setSuggestedFriends(
+                            suggestedFriends.filter((f) => f._id !== item._id)
+                        )
+                    }
                 >
                     <Text style={styles.rejectButtonText}>Remove</Text>
                 </TouchableOpacity>
@@ -409,16 +424,16 @@ const FriendsScreen = ({ navigation }) => {
                         activeTab === "friends"
                             ? filteredFriends
                             : activeTab === "requests"
-                                ? filteredRequests
-                                : filteredSuggestions
+                            ? filteredRequests
+                            : filteredSuggestions
                     }
                     keyExtractor={(item) => item._id}
                     renderItem={
                         activeTab === "friends"
                             ? renderFriendItem
                             : activeTab === "requests"
-                                ? renderRequestItem
-                                : renderSuggestedItem
+                            ? renderRequestItem
+                            : renderSuggestedItem
                     }
                     ListHeaderComponent={
                         activeTab === "friends" && (
@@ -446,8 +461,8 @@ const FriendsScreen = ({ navigation }) => {
                                     activeTab === "friends"
                                         ? "people"
                                         : activeTab === "requests"
-                                            ? "person-add"
-                                            : "search"
+                                        ? "person-add"
+                                        : "search"
                                 }
                                 size={50}
                                 color="#CCD0D5"
@@ -456,8 +471,8 @@ const FriendsScreen = ({ navigation }) => {
                                 {activeTab === "friends"
                                     ? "No Friends Found"
                                     : activeTab === "requests"
-                                        ? "No Friend Requests"
-                                        : "No Suggestions Found"}
+                                    ? "No Friend Requests"
+                                    : "No Suggestions Found"}
                             </Text>
                             <Text style={styles.emptyText}>
                                 {activeTab === "friends"
@@ -465,12 +480,12 @@ const FriendsScreen = ({ navigation }) => {
                                         ? `No friends matching "${searchText}"`
                                         : "You don't have any friends yet"
                                     : activeTab === "requests"
-                                        ? searchText
-                                            ? `No requests matching "${searchText}"`
-                                            : "You don't have any friend requests"
-                                        : searchText
-                                            ? `No suggestions matching "${searchText}"`
-                                            : "We don't have any friend suggestions for you right now"}
+                                    ? searchText
+                                        ? `No requests matching "${searchText}"`
+                                        : "You don't have any friend requests"
+                                    : searchText
+                                    ? `No suggestions matching "${searchText}"`
+                                    : "We don't have any friend suggestions for you right now"}
                             </Text>
                             {activeTab === "friends" && !searchText && (
                                 <TouchableOpacity
@@ -508,42 +523,77 @@ const FriendsScreen = ({ navigation }) => {
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
                             <View style={styles.modalHeader}>
-                                <Text style={styles.modalTitle}>{selectedFriend.name}</Text>
+                                <Text style={styles.modalTitle}>
+                                    {selectedFriend.name}
+                                </Text>
                                 <TouchableOpacity
                                     onPress={() => setShowProfileModal(false)}
                                     style={styles.closeButton}
                                 >
-                                    <Ionicons name="close" size={24} color="#65676B" />
+                                    <Ionicons
+                                        name="close"
+                                        size={24}
+                                        color="#65676B"
+                                    />
                                 </TouchableOpacity>
                             </View>
 
                             <ScrollView style={styles.modalBody}>
                                 <View style={styles.profileImageContainer}>
                                     <Image
-                                        source={{ uri: selectedFriend.profilePicture || DEFAULT_PROFILE_IMAGE }}
+                                        source={{
+                                            uri:
+                                                selectedFriend.profilePicture ||
+                                                DEFAULT_PROFILE_IMAGE,
+                                        }}
                                         style={styles.profileImage}
                                     />
                                 </View>
 
                                 <View style={styles.profileInfo}>
                                     <View style={styles.infoItem}>
-                                        <Ionicons name="location" size={20} color="#65676B" />
-                                        <Text style={styles.infoText}>Lives in {selectedFriend.location}</Text>
+                                        <Ionicons
+                                            name="location"
+                                            size={20}
+                                            color="#65676B"
+                                        />
+                                        <Text style={styles.infoText}>
+                                            Lives in {selectedFriend.location}
+                                        </Text>
                                     </View>
 
                                     <View style={styles.infoItem}>
-                                        <Ionicons name="briefcase" size={20} color="#65676B" />
-                                        <Text style={styles.infoText}>{selectedFriend.occupation}</Text>
+                                        <Ionicons
+                                            name="briefcase"
+                                            size={20}
+                                            color="#65676B"
+                                        />
+                                        <Text style={styles.infoText}>
+                                            {selectedFriend.occupation}
+                                        </Text>
                                     </View>
 
                                     <View style={styles.infoItem}>
-                                        <Ionicons name="school" size={20} color="#65676B" />
-                                        <Text style={styles.infoText}>{selectedFriend.education}</Text>
+                                        <Ionicons
+                                            name="school"
+                                            size={20}
+                                            color="#65676B"
+                                        />
+                                        <Text style={styles.infoText}>
+                                            {selectedFriend.education}
+                                        </Text>
                                     </View>
 
                                     <View style={styles.infoItem}>
-                                        <Ionicons name="people" size={20} color="#65676B" />
-                                        <Text style={styles.infoText}>{selectedFriend.mutualFriends} mutual friends</Text>
+                                        <Ionicons
+                                            name="people"
+                                            size={20}
+                                            color="#65676B"
+                                        />
+                                        <Text style={styles.infoText}>
+                                            {selectedFriend.mutualFriends}{" "}
+                                            mutual friends
+                                        </Text>
                                     </View>
                                 </View>
 
@@ -552,32 +602,59 @@ const FriendsScreen = ({ navigation }) => {
                                         style={styles.profileActionButton}
                                         onPress={() => {
                                             setShowProfileModal(false);
-                                            navigation.navigate("UserProfile", { userId: selectedFriend._id });
+                                            navigation.navigate("UserProfile", {
+                                                userId: selectedFriend._id,
+                                            });
                                         }}
                                     >
-                                        <Ionicons name="person" size={20} color="#fff" />
-                                        <Text style={styles.profileActionText}>View Profile</Text>
+                                        <Ionicons
+                                            name="person"
+                                            size={20}
+                                            color="#fff"
+                                        />
+                                        <Text style={styles.profileActionText}>
+                                            View Profile
+                                        </Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
                                         style={styles.profileActionButton}
                                         onPress={() => {
                                             setShowProfileModal(false);
-                                            navigation.navigate("Messenger", { contactId: selectedFriend._id });
+                                            navigation.navigate("Messenger", {
+                                                contactId: selectedFriend._id,
+                                            });
                                         }}
                                     >
-                                        <Ionicons name="chatbubble" size={20} color="#fff" />
-                                        <Text style={styles.profileActionText}>Message</Text>
+                                        <Ionicons
+                                            name="chatbubble"
+                                            size={20}
+                                            color="#fff"
+                                        />
+                                        <Text style={styles.profileActionText}>
+                                            Message
+                                        </Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
-                                        style={[styles.profileActionButton, styles.removeButton]}
+                                        style={[
+                                            styles.profileActionButton,
+                                            styles.removeButton,
+                                        ]}
                                         onPress={() => {
-                                            handleRemoveFriend(selectedFriend._id);
+                                            handleRemoveFriend(
+                                                selectedFriend._id
+                                            );
                                         }}
                                     >
-                                        <Ionicons name="person-remove" size={20} color="#fff" />
-                                        <Text style={styles.profileActionText}>Remove</Text>
+                                        <Ionicons
+                                            name="person-remove"
+                                            size={20}
+                                            color="#fff"
+                                        />
+                                        <Text style={styles.profileActionText}>
+                                            Remove
+                                        </Text>
                                     </TouchableOpacity>
                                 </View>
                             </ScrollView>

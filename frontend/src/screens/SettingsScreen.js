@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -8,14 +8,12 @@ import {
     Switch,
     Alert,
     Modal,
-    Linking,
+    Linking
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { AuthContext } from "../context/AuthContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SettingsScreen = ({ navigation }) => {
-    const { setUserInfo, logout } = useContext(AuthContext);
+    // State for toggles and settings
     const [darkMode, setDarkMode] = useState(false);
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [dataUsageRestricted, setDataUsageRestricted] = useState(false);
@@ -24,9 +22,10 @@ const SettingsScreen = ({ navigation }) => {
         profileVisibility: "Friends",
         postVisibility: "Friends",
         friendRequests: "Everyone",
-        taggingPermission: "Friends",
+        taggingPermission: "Friends"
     });
 
+    // Function to handle dark mode toggle
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
         Alert.alert(
@@ -36,17 +35,17 @@ const SettingsScreen = ({ navigation }) => {
         );
     };
 
+    // Function to handle notifications toggle
     const toggleNotifications = () => {
         setNotificationsEnabled(!notificationsEnabled);
         Alert.alert(
             "Notifications",
-            notificationsEnabled
-                ? "Notifications disabled"
-                : "Notifications enabled",
+            notificationsEnabled ? "Notifications disabled" : "Notifications enabled",
             [{ text: "OK" }]
         );
     };
 
+    // Function to handle data usage toggle
     const toggleDataUsage = () => {
         setDataUsageRestricted(!dataUsageRestricted);
         Alert.alert(
@@ -58,25 +57,16 @@ const SettingsScreen = ({ navigation }) => {
         );
     };
 
-    const handleLogout = async () => {
+    // Function to handle logout
+    const handleLogout = () => {
         setLogoutModalVisible(false);
 
-        try {
-            // Clear user data
-            await AsyncStorage.removeItem("userInfo");
-            await AsyncStorage.removeItem("userToken");
-
-            // Execute logout function from context
-            logout();
-
-            // Navigate to login
-            navigation.navigate("Login");
-        } catch (error) {
-            console.log("Error during logout:", error);
-            Alert.alert("Error", "Failed to logout. Please try again.");
-        }
+        // Navigate to login
+        Alert.alert("Logged Out", "You have been successfully logged out");
+        navigation.navigate("Login");
     };
 
+    // Function to handle about button
     const handleAbout = () => {
         Alert.alert(
             "About Facebook Clone",
@@ -85,6 +75,7 @@ const SettingsScreen = ({ navigation }) => {
         );
     };
 
+    // Function to handle privacy settings
     const handlePrivacySettings = () => {
         Alert.alert(
             "Privacy Settings",
@@ -101,31 +92,28 @@ const SettingsScreen = ({ navigation }) => {
                                 { text: "Cancel", style: "cancel" },
                                 {
                                     text: "Everyone",
-                                    onPress: () =>
-                                        setPrivacySettings({
-                                            ...privacySettings,
-                                            profileVisibility: "Everyone",
-                                        }),
+                                    onPress: () => {
+                                        setPrivacySettings({...privacySettings, profileVisibility: "Everyone"});
+                                        Alert.alert("Updated", "Profile visibility set to Everyone");
+                                    }
                                 },
                                 {
                                     text: "Friends",
-                                    onPress: () =>
-                                        setPrivacySettings({
-                                            ...privacySettings,
-                                            profileVisibility: "Friends",
-                                        }),
+                                    onPress: () => {
+                                        setPrivacySettings({...privacySettings, profileVisibility: "Friends"});
+                                        Alert.alert("Updated", "Profile visibility set to Friends");
+                                    }
                                 },
                                 {
                                     text: "Only Me",
-                                    onPress: () =>
-                                        setPrivacySettings({
-                                            ...privacySettings,
-                                            profileVisibility: "Only Me",
-                                        }),
+                                    onPress: () => {
+                                        setPrivacySettings({...privacySettings, profileVisibility: "Only Me"});
+                                        Alert.alert("Updated", "Profile visibility set to Only Me");
+                                    }
                                 },
                             ]
                         );
-                    },
+                    }
                 },
                 {
                     text: "Post Visibility",
@@ -137,31 +125,28 @@ const SettingsScreen = ({ navigation }) => {
                                 { text: "Cancel", style: "cancel" },
                                 {
                                     text: "Public",
-                                    onPress: () =>
-                                        setPrivacySettings({
-                                            ...privacySettings,
-                                            postVisibility: "Public",
-                                        }),
+                                    onPress: () => {
+                                        setPrivacySettings({...privacySettings, postVisibility: "Public"});
+                                        Alert.alert("Updated", "Post visibility set to Public");
+                                    }
                                 },
                                 {
                                     text: "Friends",
-                                    onPress: () =>
-                                        setPrivacySettings({
-                                            ...privacySettings,
-                                            postVisibility: "Friends",
-                                        }),
+                                    onPress: () => {
+                                        setPrivacySettings({...privacySettings, postVisibility: "Friends"});
+                                        Alert.alert("Updated", "Post visibility set to Friends");
+                                    }
                                 },
                                 {
                                     text: "Only Me",
-                                    onPress: () =>
-                                        setPrivacySettings({
-                                            ...privacySettings,
-                                            postVisibility: "Only Me",
-                                        }),
+                                    onPress: () => {
+                                        setPrivacySettings({...privacySettings, postVisibility: "Only Me"});
+                                        Alert.alert("Updated", "Post visibility set to Only Me");
+                                    }
                                 },
                             ]
                         );
-                    },
+                    }
                 },
                 {
                     text: "Friend Requests",
@@ -173,59 +158,59 @@ const SettingsScreen = ({ navigation }) => {
                                 { text: "Cancel", style: "cancel" },
                                 {
                                     text: "Everyone",
-                                    onPress: () =>
-                                        setPrivacySettings({
-                                            ...privacySettings,
-                                            friendRequests: "Everyone",
-                                        }),
+                                    onPress: () => {
+                                        setPrivacySettings({...privacySettings, friendRequests: "Everyone"});
+                                        Alert.alert("Updated", "Friend requests set to Everyone");
+                                    }
                                 },
                                 {
                                     text: "Friends of Friends",
-                                    onPress: () =>
-                                        setPrivacySettings({
-                                            ...privacySettings,
-                                            friendRequests:
-                                                "Friends of Friends",
-                                        }),
+                                    onPress: () => {
+                                        setPrivacySettings({...privacySettings, friendRequests: "Friends of Friends"});
+                                        Alert.alert("Updated", "Friend requests set to Friends of Friends");
+                                    }
                                 },
                             ]
                         );
-                    },
+                    }
                 },
             ]
         );
     };
 
+    // Function to handle account settings
     const handleAccountSettings = () => {
-        Alert.alert("Account Settings", "Manage your account preferences", [
-            { text: "Cancel", style: "cancel" },
-            {
-                text: "Edit Profile",
-                onPress: () => navigation.navigate("EditProfile"),
-            },
-            {
-                text: "Change Password",
-                onPress: () =>
-                    Alert.alert(
-                        "Change Password",
-                        "This feature is not implemented in this demo."
-                    ),
-            },
-            {
-                text: "Download Your Information",
-                onPress: () =>
-                    Alert.alert(
-                        "Download Your Information",
-                        "This feature is not implemented in this demo."
-                    ),
-            },
-        ]);
+        Alert.alert(
+            "Account Settings",
+            "Manage your account preferences",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Edit Profile",
+                    onPress: () => {
+                        Alert.alert("Navigating", "Redirecting to Edit Profile");
+                        navigation.navigate("EditProfile");
+                    }
+                },
+                {
+                    text: "Change Password",
+                    onPress: () => Alert.alert("Change Password", "This feature is not implemented in this demo.")
+                },
+                {
+                    text: "Download Your Information",
+                    onPress: () => Alert.alert("Download Your Information", "This feature is not implemented in this demo.")
+                },
+            ]
+        );
     };
 
+    // Function to handle help button
     const handleHelp = () => {
+        Alert.alert("Help Center", "Navigating to Help Center");
         navigation.navigate("Help");
     };
 
+    // Function to handle terms and policies
     const handleTerms = () => {
         Alert.alert(
             "Terms and Policies",
@@ -234,30 +219,27 @@ const SettingsScreen = ({ navigation }) => {
                 { text: "Cancel", style: "cancel" },
                 {
                     text: "Terms of Service",
-                    onPress: () =>
-                        Linking.openURL(
-                            "https://www.facebook.com/terms.php"
-                        ).catch((err) =>
-                            Alert.alert("Error", "Could not open link")
-                        ),
+                    onPress: () => {
+                        Alert.alert("Opening Link", "Attempting to open Terms of Service webpage");
+                        Linking.openURL("https://www.facebook.com/terms.php")
+                            .catch(err => Alert.alert("Error", "Could not open link"))
+                    }
                 },
                 {
                     text: "Privacy Policy",
-                    onPress: () =>
-                        Linking.openURL(
-                            "https://www.facebook.com/privacy/policy/"
-                        ).catch((err) =>
-                            Alert.alert("Error", "Could not open link")
-                        ),
+                    onPress: () => {
+                        Alert.alert("Opening Link", "Attempting to open Privacy Policy webpage");
+                        Linking.openURL("https://www.facebook.com/privacy/policy/")
+                            .catch(err => Alert.alert("Error", "Could not open link"))
+                    }
                 },
                 {
                     text: "Cookie Policy",
-                    onPress: () =>
-                        Linking.openURL(
-                            "https://www.facebook.com/privacy/policies/cookies/"
-                        ).catch((err) =>
-                            Alert.alert("Error", "Could not open link")
-                        ),
+                    onPress: () => {
+                        Alert.alert("Opening Link", "Attempting to open Cookie Policy webpage");
+                        Linking.openURL("https://www.facebook.com/privacy/policies/cookies/")
+                            .catch(err => Alert.alert("Error", "Could not open link"))
+                    }
                 },
             ]
         );
@@ -267,7 +249,10 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity
-                    onPress={() => navigation.goBack()}
+                    onPress={() => {
+                        Alert.alert("Going Back", "Returning to previous screen");
+                        navigation.goBack();
+                    }}
                     style={styles.backButton}
                 >
                     <Ionicons name="arrow-back" size={24} color="#1877F2" />
@@ -284,12 +269,7 @@ const SettingsScreen = ({ navigation }) => {
                         onPress={toggleDarkMode}
                     >
                         <View style={styles.settingLeftContent}>
-                            <Ionicons
-                                name="moon-outline"
-                                size={24}
-                                color="#65676B"
-                                style={styles.settingIcon}
-                            />
+                            <Ionicons name="moon-outline" size={24} color="#65676B" style={styles.settingIcon} />
                             <Text style={styles.settingText}>Dark Mode</Text>
                         </View>
                         <Switch
@@ -305,15 +285,8 @@ const SettingsScreen = ({ navigation }) => {
                         onPress={toggleNotifications}
                     >
                         <View style={styles.settingLeftContent}>
-                            <Ionicons
-                                name="notifications-outline"
-                                size={24}
-                                color="#65676B"
-                                style={styles.settingIcon}
-                            />
-                            <Text style={styles.settingText}>
-                                Notifications
-                            </Text>
+                            <Ionicons name="notifications-outline" size={24} color="#65676B" style={styles.settingIcon} />
+                            <Text style={styles.settingText}>Notifications</Text>
                         </View>
                         <Switch
                             value={notificationsEnabled}
@@ -328,12 +301,7 @@ const SettingsScreen = ({ navigation }) => {
                         onPress={toggleDataUsage}
                     >
                         <View style={styles.settingLeftContent}>
-                            <Ionicons
-                                name="cellular-outline"
-                                size={24}
-                                color="#65676B"
-                                style={styles.settingIcon}
-                            />
+                            <Ionicons name="cellular-outline" size={24} color="#65676B" style={styles.settingIcon} />
                             <Text style={styles.settingText}>Data Usage</Text>
                         </View>
                         <Switch
@@ -353,21 +321,10 @@ const SettingsScreen = ({ navigation }) => {
                         onPress={handlePrivacySettings}
                     >
                         <View style={styles.settingLeftContent}>
-                            <Ionicons
-                                name="lock-closed-outline"
-                                size={24}
-                                color="#65676B"
-                                style={styles.settingIcon}
-                            />
-                            <Text style={styles.settingText}>
-                                Privacy Settings
-                            </Text>
+                            <Ionicons name="lock-closed-outline" size={24} color="#65676B" style={styles.settingIcon} />
+                            <Text style={styles.settingText}>Privacy Settings</Text>
                         </View>
-                        <Ionicons
-                            name="chevron-forward"
-                            size={24}
-                            color="#CCD0D5"
-                        />
+                        <Ionicons name="chevron-forward" size={24} color="#CCD0D5" />
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -375,21 +332,10 @@ const SettingsScreen = ({ navigation }) => {
                         onPress={handleAccountSettings}
                     >
                         <View style={styles.settingLeftContent}>
-                            <Ionicons
-                                name="person-outline"
-                                size={24}
-                                color="#65676B"
-                                style={styles.settingIcon}
-                            />
-                            <Text style={styles.settingText}>
-                                Account Settings
-                            </Text>
+                            <Ionicons name="person-outline" size={24} color="#65676B" style={styles.settingIcon} />
+                            <Text style={styles.settingText}>Account Settings</Text>
                         </View>
-                        <Ionicons
-                            name="chevron-forward"
-                            size={24}
-                            color="#CCD0D5"
-                        />
+                        <Ionicons name="chevron-forward" size={24} color="#CCD0D5" />
                     </TouchableOpacity>
                 </View>
 
@@ -401,19 +347,10 @@ const SettingsScreen = ({ navigation }) => {
                         onPress={handleHelp}
                     >
                         <View style={styles.settingLeftContent}>
-                            <Ionicons
-                                name="help-circle-outline"
-                                size={24}
-                                color="#65676B"
-                                style={styles.settingIcon}
-                            />
+                            <Ionicons name="help-circle-outline" size={24} color="#65676B" style={styles.settingIcon} />
                             <Text style={styles.settingText}>Help Center</Text>
                         </View>
-                        <Ionicons
-                            name="chevron-forward"
-                            size={24}
-                            color="#CCD0D5"
-                        />
+                        <Ionicons name="chevron-forward" size={24} color="#CCD0D5" />
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -421,21 +358,10 @@ const SettingsScreen = ({ navigation }) => {
                         onPress={handleTerms}
                     >
                         <View style={styles.settingLeftContent}>
-                            <Ionicons
-                                name="document-text-outline"
-                                size={24}
-                                color="#65676B"
-                                style={styles.settingIcon}
-                            />
-                            <Text style={styles.settingText}>
-                                Terms and Policies
-                            </Text>
+                            <Ionicons name="document-text-outline" size={24} color="#65676B" style={styles.settingIcon} />
+                            <Text style={styles.settingText}>Terms and Policies</Text>
                         </View>
-                        <Ionicons
-                            name="chevron-forward"
-                            size={24}
-                            color="#CCD0D5"
-                        />
+                        <Ionicons name="chevron-forward" size={24} color="#CCD0D5" />
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -443,19 +369,10 @@ const SettingsScreen = ({ navigation }) => {
                         onPress={handleAbout}
                     >
                         <View style={styles.settingLeftContent}>
-                            <Ionicons
-                                name="information-circle-outline"
-                                size={24}
-                                color="#65676B"
-                                style={styles.settingIcon}
-                            />
+                            <Ionicons name="information-circle-outline" size={24} color="#65676B" style={styles.settingIcon} />
                             <Text style={styles.settingText}>About</Text>
                         </View>
-                        <Ionicons
-                            name="chevron-forward"
-                            size={24}
-                            color="#CCD0D5"
-                        />
+                        <Ionicons name="chevron-forward" size={24} color="#CCD0D5" />
                     </TouchableOpacity>
                 </View>
 
@@ -481,26 +398,16 @@ const SettingsScreen = ({ navigation }) => {
                         </Text>
                         <View style={styles.modalButtons}>
                             <TouchableOpacity
-                                style={[
-                                    styles.modalButton,
-                                    styles.cancelButton,
-                                ]}
+                                style={[styles.modalButton, styles.cancelButton]}
                                 onPress={() => setLogoutModalVisible(false)}
                             >
-                                <Text style={styles.cancelButtonText}>
-                                    Cancel
-                                </Text>
+                                <Text style={styles.cancelButtonText}>Cancel</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[
-                                    styles.modalButton,
-                                    styles.confirmButton,
-                                ]}
+                                style={[styles.modalButton, styles.confirmButton]}
                                 onPress={handleLogout}
                             >
-                                <Text style={styles.confirmButtonText}>
-                                    Log Out
-                                </Text>
+                                <Text style={styles.confirmButtonText}>Log Out</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

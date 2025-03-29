@@ -8,10 +8,12 @@ const {
     searchUsers,
     updateProfilePicture,
     updateCoverPhoto,
+    getSuggestedFriends
 } = require("../controllers/users");
 
 router.get("/", protect, getUsers);
 router.get("/search", protect, searchUsers);
+router.get("/suggested", protect, getSuggestedFriends);
 router.get("/:id", protect, getUser);
 router.put(
     "/profile-picture",

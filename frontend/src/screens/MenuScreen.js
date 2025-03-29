@@ -25,26 +25,26 @@ const MenuScreen = ({ navigation }) => {
                     id: "memories",
                     title: "Memories",
                     icon: "time-outline",
-                    color: "#1877F2",
+            color: "#1877F2",
                     onPress: () => navigation.navigate("Memories"),
-                },
-                {
-                    id: "saved",
-                    title: "Saved",
+        },
+        {
+            id: "saved",
+            title: "Saved",
                     icon: "bookmark-outline",
                     color: "#C837AB",
                     onPress: () => navigation.navigate("Saved"),
-                },
-                {
-                    id: "groups",
-                    title: "Groups",
+        },
+        {
+            id: "groups",
+            title: "Groups",
                     icon: "people-outline",
                     color: "#0BC6DF",
                     onPress: () => navigation.navigate("Groups"),
-                },
-                {
-                    id: "marketplace",
-                    title: "Marketplace",
+        },
+        {
+            id: "marketplace",
+            title: "Marketplace",
                     icon: "storefront-outline",
                     color: "#F5533D",
                     onPress: () => navigation.navigate("Marketplace"),
@@ -84,17 +84,17 @@ const MenuScreen = ({ navigation }) => {
                             ]
                         );
                     },
-                },
-                {
-                    id: "pages",
-                    title: "Pages",
+        },
+        {
+            id: "pages",
+            title: "Pages",
                     icon: "flag-outline",
                     color: "#F79D3B",
                     onPress: () => navigation.navigate("Pages"),
-                },
-                {
-                    id: "events",
-                    title: "Events",
+        },
+        {
+            id: "events",
+            title: "Events",
                     icon: "calendar-outline",
                     color: "#F02849",
                     onPress: () => navigation.navigate("Events"),
@@ -260,12 +260,12 @@ const MenuScreen = ({ navigation }) => {
             disabled={item.toggle}
         >
             <View style={styles.menuItemLeft}>
-                <View
+            <View
                     style={[
                         styles.iconContainer,
                         { backgroundColor: item.color + "20" }, // Adding 20% opacity
                     ]}
-                >
+            >
                     <Ionicons name={item.icon} size={24} color={item.color} />
                 </View>
                 <Text style={styles.menuItemText}>{item.title}</Text>
@@ -333,7 +333,7 @@ const MenuScreen = ({ navigation }) => {
                         <View style={styles.categoryItems}>
                             {category.items.map(renderMenuItem)}
                         </View>
-                    </View>
+                </View>
                 ))}
 
                 <TouchableOpacity

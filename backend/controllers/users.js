@@ -143,3 +143,49 @@ exports.updateCoverPhoto = async (req, res, next) => {
         next(err);
     }
 };
+
+// @desc    Get suggested friends
+// @route   GET /api/users/suggested
+// @access  Private
+exports.getSuggestedFriends = async (req, res, next) => {
+    try {
+        const currentUser = await User.findById(req.user.id).populate('friends');
+
+        // Get users who are not friends and not in friend requests
+        const suggestedUsers = await User.find({
+            _id: {
+                $nin: [
+                    req.user.id,
+                    ...currentUser.friends.map(f => f._id),
+                    ...currentUser.friendRequests
+                ]
+            }
+        }).select('name email profilePicture location');
+
+        // Calculate mutual friends for each suggested user
+        const suggestedUsersWithMutual = await Promise.all(
+            suggestedUsers.map(async (user) => {
+                const userWithFriends = await User.findById(user._id).populate('friends');
+                const mutualFriends = userWithFriends.friends.filter(friend =>
+                    currentUser.friends.some(myFriend => myFriend._id.toString() === friend._id.toString())
+                ).length;
+
+                return {
+                    ...user.toObject(),
+                    mutualFriends
+                };
+            })
+        );
+
+        // Sort by number of mutual friends
+        const sortedSuggestions = suggestedUsersWithMutual.sort((a, b) => b.mutualFriends - a.mutualFriends);
+
+        res.status(200).json({
+            success: true,
+            count: sortedSuggestions.length,
+            data: sortedSuggestions
+        });
+    } catch (err) {
+        next(err);
+    }
+};
