@@ -13,8 +13,22 @@ const PostItem = ({
     const isLiked = post.likes.includes(currentUserId);
 
     const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString();
+        const now = new Date();
+        const postDate = new Date(dateString);
+        const diffTime = Math.abs(now - postDate);
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+        const diffMinutes = Math.floor(diffTime / (1000 * 60));
+
+        if (diffMinutes < 60) {
+            return `${diffMinutes}m`;
+        } else if (diffHours < 24) {
+            return `${diffHours}h`;
+        } else if (diffDays < 7) {
+            return `${diffDays}d`;
+        } else {
+            return postDate.toLocaleDateString();
+        }
     };
 
     return (
@@ -34,9 +48,13 @@ const PostItem = ({
                     />
                     <View>
                         <Text style={styles.userName}>{post.user.name}</Text>
-                        <Text style={styles.postTime}>
-                            {formatDate(post.createdAt)}
-                        </Text>
+                        <View style={styles.postMetaContainer}>
+                            <Text style={styles.postTime}>
+                                {formatDate(post.createdAt)}
+                            </Text>
+                            <Text style={styles.postDot}>•</Text>
+                            <Ionicons name="earth" size={12} color="#65676B" />
+                        </View>
                     </View>
                 </TouchableOpacity>
 
@@ -66,10 +84,14 @@ const PostItem = ({
                     </View>
                     <Text style={styles.statsText}>{post.likes.length}</Text>
                 </View>
-                <Text style={styles.statsText}>
-                    {post.comments.length} comments
-                </Text>
+                <TouchableOpacity>
+                    <Text style={styles.statsText}>
+                        {post.comments.length} comments
+                    </Text>
+                </TouchableOpacity>
             </View>
+
+            <View style={styles.divider} />
 
             <View style={styles.actionsContainer}>
                 <TouchableOpacity
@@ -104,7 +126,11 @@ const PostItem = ({
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.actionButton}>
-                    <Ionicons name="share-outline" size={22} color="#65676B" />
+                    <Ionicons
+                        name="share-social-outline"
+                        size={22}
+                        color="#65676B"
+                    />
                     <Text style={styles.actionText}>Share</Text>
                 </TouchableOpacity>
             </View>
@@ -137,10 +163,20 @@ const styles = StyleSheet.create({
     userName: {
         fontWeight: "bold",
         fontSize: 16,
+        color: "#050505",
+    },
+    postMetaContainer: {
+        flexDirection: "row",
+        alignItems: "center",
     },
     postTime: {
         color: "#65676B",
         fontSize: 12,
+    },
+    postDot: {
+        color: "#65676B",
+        fontSize: 12,
+        marginHorizontal: 4,
     },
     moreButton: {
         width: 30,
@@ -152,19 +188,24 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 10,
         lineHeight: 22,
+        color: "#050505",
     },
     postImage: {
         width: "100%",
         height: 300,
-        borderRadius: 10,
+        borderRadius: 8,
         marginBottom: 10,
+        backgroundColor: "#f0f2f5",
     },
     postStats: {
         flexDirection: "row",
         justifyContent: "space-between",
         paddingVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#E4E6EB",
+    },
+    divider: {
+        height: 1,
+        backgroundColor: "#E4E6EB",
+        marginBottom: 5,
     },
     likesContainer: {
         flexDirection: "row",
@@ -181,23 +222,26 @@ const styles = StyleSheet.create({
     },
     statsText: {
         color: "#65676B",
+        fontSize: 13,
     },
     actionsContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingVertical: 10,
+        paddingVertical: 5,
     },
     actionButton: {
         flex: 1,
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        paddingVertical: 5,
+        paddingVertical: 6,
+        borderRadius: 5,
     },
     actionText: {
         marginLeft: 5,
         color: "#65676B",
         fontWeight: "500",
+        fontSize: 13,
     },
 });
 

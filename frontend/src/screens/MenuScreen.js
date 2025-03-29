@@ -24,54 +24,28 @@ const MenuScreen = ({ navigation }) => {
                 navigation.navigate("Friends");
                 break;
             case "saved":
-                Alert.alert("Saved", "View your saved posts and collections");
-                // Implement saved posts functionality
+                navigation.navigate("Saved");
                 break;
             case "groups":
-                Alert.alert(
-                    "Groups",
-                    "Connect with like-minded people through groups"
-                );
-                // Implement groups functionality
+                navigation.navigate("Groups");
                 break;
             case "marketplace":
-                Alert.alert(
-                    "Marketplace",
-                    "Buy and sell items with people in your area"
-                );
-                // Implement marketplace functionality
+                navigation.navigate("Marketplace");
                 break;
             case "memories":
-                Alert.alert(
-                    "Memories",
-                    "Revisit posts from this day in the past"
-                );
-                // Implement memories functionality
+                navigation.navigate("Memories");
                 break;
             case "pages":
-                Alert.alert(
-                    "Pages",
-                    "Discover and connect with businesses on Facebook"
-                );
-                // Implement pages functionality
+                navigation.navigate("Pages");
                 break;
             case "events":
-                Alert.alert(
-                    "Events",
-                    "Organize or find events and other things to do"
-                );
-                // Implement events functionality
+                navigation.navigate("Events");
                 break;
             case "settings":
-                Alert.alert(
-                    "Settings & Privacy",
-                    "Manage your account settings and privacy"
-                );
-                // Implement settings & privacy functionality
+                navigation.navigate("Settings");
                 break;
             case "help":
-                Alert.alert("Help & Support", "Get help with using Facebook");
-                // Implement help & support functionality
+                navigation.navigate("Help");
                 break;
             case "logout":
                 logout();
@@ -258,9 +232,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         borderBottomWidth: 1,
         borderBottomColor: "#E4E6EB",
+        elevation: 2,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 1,
     },
     title: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: "bold",
         color: "#1877F2",
     },
@@ -277,6 +256,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 15,
         backgroundColor: "#fff",
+        borderBottomWidth: 1,
+        borderBottomColor: "#E4E6EB",
     },
     profilePic: {
         width: 60,
@@ -291,25 +272,30 @@ const styles = StyleSheet.create({
     profileName: {
         fontSize: 18,
         fontWeight: "bold",
+        color: "#050505",
     },
     viewProfile: {
         color: "#65676B",
         marginTop: 3,
     },
     divider: {
-        height: 8,
+        height: 10,
         backgroundColor: "#F0F2F5",
     },
     menuSection: {
         backgroundColor: "#fff",
-        paddingTop: 10,
+        paddingTop: 12,
+        marginBottom: 10,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: "#E4E6EB",
     },
     menuSectionTitle: {
         fontSize: 16,
         fontWeight: "600",
         color: "#65676B",
         paddingHorizontal: 15,
-        paddingBottom: 5,
+        paddingBottom: 8,
     },
     menuList: {
         backgroundColor: "#fff",
@@ -317,7 +303,7 @@ const styles = StyleSheet.create({
     menuItem: {
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: 12,
+        paddingVertical: 14,
         paddingHorizontal: 15,
         borderBottomWidth: 0.5,
         borderBottomColor: "#E4E6EB",
@@ -333,6 +319,7 @@ const styles = StyleSheet.create({
     menuItemText: {
         fontSize: 16,
         flex: 1,
+        color: "#050505",
     },
     arrowContainer: {
         marginLeft: "auto",
@@ -342,6 +329,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#fff",
         marginTop: 10,
+        borderTopWidth: 1,
+        borderTopColor: "#E4E6EB",
     },
     footerText: {
         color: "#65676B",

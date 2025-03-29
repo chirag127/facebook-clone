@@ -18,6 +18,16 @@ import PostDetailScreen from "../screens/PostDetailScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import UserProfileScreen from "../screens/UserProfileScreen";
 
+// Menu Screens
+import SavedScreen from "../screens/SavedScreen";
+import GroupsScreen from "../screens/GroupsScreen";
+import MarketplaceScreen from "../screens/MarketplaceScreen";
+import MemoriesScreen from "../screens/MemoriesScreen";
+import PagesScreen from "../screens/PagesScreen";
+import EventsScreen from "../screens/EventsScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import HelpScreen from "../screens/HelpScreen";
+
 // Context
 import { AuthContext } from "../context/AuthContext";
 
@@ -63,6 +73,22 @@ const ProfileStack = () => {
     );
 };
 
+const MenuStack = () => {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="MenuScreen" component={MenuScreen} />
+            <Stack.Screen name="Saved" component={SavedScreen} />
+            <Stack.Screen name="Groups" component={GroupsScreen} />
+            <Stack.Screen name="Marketplace" component={MarketplaceScreen} />
+            <Stack.Screen name="Memories" component={MemoriesScreen} />
+            <Stack.Screen name="Pages" component={PagesScreen} />
+            <Stack.Screen name="Events" component={EventsScreen} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen name="Help" component={HelpScreen} />
+        </Stack.Navigator>
+    );
+};
+
 const MainTabNavigator = () => {
     return (
         <Tab.Navigator
@@ -89,7 +115,21 @@ const MainTabNavigator = () => {
                     );
                 },
                 tabBarActiveTintColor: "#1877F2",
-                tabBarInactiveTintColor: "gray",
+                tabBarInactiveTintColor: "#65676B",
+                tabBarStyle: {
+                    borderTopWidth: 1,
+                    borderTopColor: "#E4E6EB",
+                    elevation: 8,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: -2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 3,
+                    height: 55,
+                    paddingBottom: 5,
+                },
+                tabBarLabelStyle: {
+                    fontSize: 12,
+                },
             })}
         >
             <Tab.Screen
@@ -104,7 +144,11 @@ const MainTabNavigator = () => {
                 options={{ headerShown: false }}
             />
             <Tab.Screen name="Notifications" component={NotificationsScreen} />
-            <Tab.Screen name="Menu" component={MenuScreen} />
+            <Tab.Screen
+                name="Menu"
+                component={MenuStack}
+                options={{ headerShown: false }}
+            />
         </Tab.Navigator>
     );
 };
