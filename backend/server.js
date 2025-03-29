@@ -24,8 +24,15 @@ const app = express();
 app.use(express.json());
 
 // Enable CORS
-app.use(cors());
-
+app.use(
+    cors({
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
+        exposedHeaders: ["Access-Control-Allow-Origin"],
+    })
+);
 // Set static folder
 app.use(express.static(path.join(__dirname, "uploads")));
 

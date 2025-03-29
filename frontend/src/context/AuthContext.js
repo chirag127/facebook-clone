@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+// const API_URL = "http://localhost:5000/api"; // Use localhost for development
+const API_URL = "https://facebook-clone-qf4b.onrender.com/api"; // Use production URL for deployment
 
 // Create a storage wrapper that works on both web and mobile
 const secureStorage = {
@@ -52,7 +54,6 @@ export const AuthContext = createContext();
 
 // // Determine the API URL based on platform
 
-const API_URL = "http://localhost:5000/api"; // Use localhost for development
 
 export const AuthProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(false);
