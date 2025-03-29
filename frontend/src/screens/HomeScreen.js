@@ -15,7 +15,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
 import { getPosts, createPost, likePost, unlikePost } from "../api/api";
-import { DEFAULT_PROFILE_IMAGE } from "../utils/constants";
+import { DEFAULT_PROFILE_IMAGE, PLACEHOLDER_IMAGE } from "../utils/constants";
 import PostItem from "../components/PostItem";
 import CreatePostModal from "../components/CreatePostModal";
 
@@ -70,6 +70,28 @@ const HomeScreen = ({ navigation }) => {
         }
     };
 
+    const handleStoryPress = (story) => {
+        if (story.isCreateStory) {
+            Alert.alert("Create Story", "Share a photo or write something", [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Take Photo",
+                    onPress: () => console.log("Taking photo"),
+                },
+                {
+                    text: "Choose from Gallery",
+                    onPress: () => console.log("Choosing from gallery"),
+                },
+            ]);
+        } else {
+            Alert.alert(
+                `${story.user.name}'s Story`,
+                `Viewing story from ${story.user.name}`,
+                [{ text: "Close", style: "cancel" }]
+            );
+        }
+    };
+
     // Generate mock stories
     const stories = [
         {
@@ -121,27 +143,13 @@ const HomeScreen = ({ navigation }) => {
         },
     ];
 
-    const handleCreateStory = () => {
-        Alert.alert(
-            "Create Story",
-            "This feature will allow you to create and share stories with your friends.",
-            [{ text: "Cancel", style: "cancel" }, { text: "OK" }]
-        );
-    };
-
-    const handleViewStory = (story) => {
-        Alert.alert("View Story", `Viewing ${story.user.name}'s story`, [
-            { text: "OK" },
-        ]);
-    };
-
     const renderStory = (story) => {
         if (story.isCreateStory) {
             return (
                 <TouchableOpacity
                     key={story.id}
                     style={styles.createStoryContainer}
-                    onPress={handleCreateStory}
+                    onPress={() => handleStoryPress(story)}
                 >
                     <View style={styles.storyImageContainer}>
                         <Image
@@ -169,7 +177,7 @@ const HomeScreen = ({ navigation }) => {
             <TouchableOpacity
                 key={story.id}
                 style={styles.storyContainer}
-                onPress={() => handleViewStory(story)}
+                onPress={() => handleStoryPress(story)}
             >
                 <View style={styles.storyImageContainer}>
                     <Image
@@ -228,8 +236,7 @@ const HomeScreen = ({ navigation }) => {
                     onPress={() =>
                         Alert.alert(
                             "Live Video",
-                            "Start a live video broadcast to connect with your friends in real-time.",
-                            [{ text: "OK" }]
+                            "Start a live video broadcast"
                         )
                     }
                 >
@@ -254,8 +261,7 @@ const HomeScreen = ({ navigation }) => {
                     onPress={() =>
                         Alert.alert(
                             "Feeling/Activity",
-                            "Share how you're feeling or what you're doing right now.",
-                            [{ text: "OK" }]
+                            "Share how you're feeling or what you're doing"
                         )
                     }
                 >
@@ -284,8 +290,7 @@ const HomeScreen = ({ navigation }) => {
                         onPress={() =>
                             Alert.alert(
                                 "Search",
-                                "Search for people, posts, and more.",
-                                [{ text: "OK" }]
+                                "Search people, posts, and more"
                             )
                         }
                     >
@@ -294,11 +299,7 @@ const HomeScreen = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.iconButton}
                         onPress={() =>
-                            Alert.alert(
-                                "Messenger",
-                                "Chat with your friends and connections.",
-                                [{ text: "OK" }]
-                            )
+                            Alert.alert("Messages", "See your messages")
                         }
                     >
                         <Ionicons
@@ -342,6 +343,27 @@ const HomeScreen = ({ navigation }) => {
                         onRefresh={handleRefresh}
                     />
                 }
+                ListEmptyComponent={
+                    <View style={styles.emptyContainer}>
+                        <Ionicons
+                            name="newspaper-outline"
+                            size={60}
+                            color="#CCD0D5"
+                        />
+                        <Text style={styles.emptyText}>No posts yet</Text>
+                        <Text style={styles.emptySubtext}>
+                            Be the first to share something!
+                        </Text>
+                        <TouchableOpacity
+                            style={styles.createFirstPostButton}
+                            onPress={() => setModalVisible(true)}
+                        >
+                            <Text style={styles.createFirstPostText}>
+                                Create Post
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                }
             />
 
             <CreatePostModal
@@ -373,16 +395,11 @@ const styles = StyleSheet.create({
         elevation: 2,
         borderBottomWidth: 1,
         borderBottomColor: "#E4E6EB",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 1,
     },
     logo: {
         color: "#1877F2",
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: "bold",
-        fontFamily: "Arial",
     },
     topBarIcons: {
         flexDirection: "row",
@@ -395,23 +412,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginLeft: 10,
-        elevation: 1,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 1,
     },
     storiesContainer: {
         paddingVertical: 10,
         backgroundColor: "#fff",
         marginBottom: 8,
-        borderBottomWidth: 1,
-        borderBottomColor: "#E4E6EB",
-        elevation: 1,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 1,
     },
     storyContainer: {
         width: 110,
@@ -468,14 +473,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         padding: 12,
         marginBottom: 8,
-        borderTopWidth: 1,
-        borderBottomWidth: 1,
-        borderColor: "#E4E6EB",
-        elevation: 1,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 1,
     },
     createPostContainer: {
         flexDirection: "row",
@@ -494,8 +491,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#F0F2F5",
         paddingHorizontal: 15,
         justifyContent: "center",
-        borderWidth: 1,
-        borderColor: "#E4E6EB",
     },
     createPostText: {
         color: "#65676B",
@@ -525,6 +520,37 @@ const styles = StyleSheet.create({
         width: 1,
         backgroundColor: "#E4E6EB",
         marginHorizontal: 4,
+    },
+    emptyContainer: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 30,
+        backgroundColor: "#fff",
+        marginTop: 8,
+    },
+    emptyText: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#1c1e21",
+        marginTop: 15,
+    },
+    emptySubtext: {
+        fontSize: 14,
+        color: "#65676B",
+        marginTop: 5,
+        textAlign: "center",
+    },
+    createFirstPostButton: {
+        backgroundColor: "#1877F2",
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 6,
+        marginTop: 15,
+    },
+    createFirstPostText: {
+        color: "#fff",
+        fontWeight: "500",
     },
 });
 

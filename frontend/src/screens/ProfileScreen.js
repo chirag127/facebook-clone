@@ -22,6 +22,7 @@ import {
 } from "../api/api";
 import PostItem from "../components/PostItem";
 import { DEFAULT_PROFILE_IMAGE, DEFAULT_COVER_IMAGE } from "../utils/constants";
+import { generateShareableUrl, shareContent } from "../utils/linkingUtils";
 
 const ProfileScreen = ({ navigation }) => {
     const { userInfo, logout, setUserInfo } = useContext(AuthContext);
@@ -248,208 +249,94 @@ const ProfileScreen = ({ navigation }) => {
         ]);
     };
 
+    const handleShareProfile = () => {
+        const shareableUrl = generateShareableUrl("profile", {
+            userId: userInfo?._id || "currentUser",
+        });
+        shareContent({
+            title: `${userInfo?.name}'s Profile`,
+            message: `Check out ${userInfo?.name}'s profile on Facebook Clone!`,
+            url: shareableUrl,
+        });
+    };
+
     const ProfileHeader = () => (
         <View style={styles.profileHeader}>
-            <View style={styles.coverPhotoContainer}>
+            <TouchableOpacity
+                style={styles.coverPhotoContainer}
+                onPress={() => showImageOptions("cover")}
+                activeOpacity={0.9}
+            >
                 <Image
                     source={{
                         uri: userInfo?.coverPhoto || DEFAULT_COVER_IMAGE,
                     }}
                     style={styles.coverPhoto}
                 />
+                <View style={styles.editCoverButton}>
+                    <Ionicons name="camera" size={22} color="#fff" />
+                </View>
+            </TouchableOpacity>
+            <View style={styles.profilePhotoContainer}>
                 <TouchableOpacity
-                    style={styles.editCoverButton}
-                    onPress={() =>
-                        Alert.alert(
-                            "Edit Cover Photo",
-                            "Upload a new cover photo for your profile."
-                        )
-                    }
+                    onPress={() => showImageOptions("profile")}
+                    activeOpacity={0.9}
                 >
-                    <Ionicons name="camera" size={20} color="#fff" />
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.profileInfoContainer}>
-                <View style={styles.profilePicContainer}>
                     <Image
                         source={{
                             uri:
                                 userInfo?.profilePicture ||
                                 DEFAULT_PROFILE_IMAGE,
                         }}
-                        style={styles.profilePic}
+                        style={styles.profilePhoto}
                     />
-                    <TouchableOpacity
-                        style={styles.editProfilePicButton}
-                        onPress={() =>
-                            Alert.alert(
-                                "Edit Profile Picture",
-                                "Upload a new profile picture."
-                            )
-                        }
-                    >
-                        <Ionicons name="camera" size={20} color="#fff" />
-                    </TouchableOpacity>
-                </View>
-
-                <Text style={styles.userName}>{userInfo?.name}</Text>
-                <Text style={styles.userBio}>
+                    <View style={styles.editProfilePhotoButton}>
+                        <Ionicons name="camera" size={18} color="#fff" />
+                    </View>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.profileNameContainer}>
+                <Text style={styles.profileName}>{userInfo?.name}</Text>
+                <Text style={styles.bio}>
                     {userInfo?.bio ||
-                        "Add a short bio to tell people more about yourself"}
+                        "No bio yet. Add one to tell people about yourself."}
                 </Text>
-
-                <View style={styles.statsContainer}>
+                <TouchableOpacity
+                    style={styles.editProfileButton}
+                    onPress={() => navigation.navigate("EditProfile")}
+                >
+                    <Text style={styles.editProfileText}>Edit Profile</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.profileActions}>
+                <View style={styles.divider} />
+                <View style={styles.actionButtons}>
                     <TouchableOpacity
-                        style={styles.statItem}
-                        onPress={() => navigation.navigate("Friends")}
+                        style={styles.actionButton}
+                        onPress={handleCreatePost}
                     >
-                        <Ionicons name="people" size={18} color="#65676B" />
-                        <Text style={styles.statText}>
-                            {userInfo?.friends?.length || 0} Friends
-                        </Text>
+                        <Ionicons name="add-circle" size={16} color="#1877F2" />
+                        <Text style={styles.actionButtonText}>Post</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.statItem}
-                        onPress={() => setActiveTab("about")}
-                    >
-                        <Ionicons name="location" size={18} color="#65676B" />
-                        <Text style={styles.statText}>
-                            {userInfo?.location || "Add location"}
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.statItem}
-                        onPress={() => setActiveTab("about")}
-                    >
-                        <Ionicons name="briefcase" size={18} color="#65676B" />
-                        <Text style={styles.statText}>
-                            {userInfo?.workplace || "Add workplace"}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={styles.actionsContainer}>
-                    <TouchableOpacity
-                        style={[styles.actionButton, styles.primaryButton]}
+                        style={styles.actionButton}
                         onPress={handleAddStory}
                     >
-                        <Ionicons name="add-circle" size={18} color="#fff" />
-                        <Text style={styles.primaryButtonText}>
-                            Add to Story
-                        </Text>
+                        <Ionicons name="image" size={16} color="#1877F2" />
+                        <Text style={styles.actionButtonText}>Story</Text>
                     </TouchableOpacity>
-
                     <TouchableOpacity
-                        style={[styles.actionButton, styles.secondaryButton]}
-                        onPress={() => navigation.navigate("EditProfile")}
-                    >
-                        <Ionicons name="pencil" size={18} color="#1877F2" />
-                        <Text style={styles.secondaryButtonText}>
-                            Edit Profile
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.moreButton}
-                        onPress={() =>
-                            Alert.alert("More Options", "Choose an action", [
-                                {
-                                    text: "View Activity Log",
-                                    onPress: () => console.log("Activity Log"),
-                                },
-                                {
-                                    text: "Archive",
-                                    onPress: () => console.log("Archive"),
-                                },
-                                {
-                                    text: "Settings",
-                                    onPress: () =>
-                                        navigation.navigate("Settings"),
-                                },
-                                { text: "Log Out", onPress: logout },
-                                { text: "Cancel", style: "cancel" },
-                            ])
-                        }
+                        style={styles.actionButton}
+                        onPress={handleShareProfile}
                     >
                         <Ionicons
-                            name="ellipsis-horizontal"
-                            size={20}
-                            color="#65676B"
+                            name="share-social"
+                            size={16}
+                            color="#1877F2"
                         />
+                        <Text style={styles.actionButtonText}>Share</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
-
-            <View style={styles.tabsContainer}>
-                <TouchableOpacity
-                    style={[
-                        styles.tab,
-                        activeTab === "posts" && styles.activeTab,
-                    ]}
-                    onPress={() => setActiveTab("posts")}
-                >
-                    <Text
-                        style={
-                            activeTab === "posts"
-                                ? styles.activeTabText
-                                : styles.tabText
-                        }
-                    >
-                        Posts
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[
-                        styles.tab,
-                        activeTab === "about" && styles.activeTab,
-                    ]}
-                    onPress={() => setActiveTab("about")}
-                >
-                    <Text
-                        style={
-                            activeTab === "about"
-                                ? styles.activeTabText
-                                : styles.tabText
-                        }
-                    >
-                        About
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[
-                        styles.tab,
-                        activeTab === "friends" && styles.activeTab,
-                    ]}
-                    onPress={() => setActiveTab("friends")}
-                >
-                    <Text
-                        style={
-                            activeTab === "friends"
-                                ? styles.activeTabText
-                                : styles.tabText
-                        }
-                    >
-                        Friends
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[
-                        styles.tab,
-                        activeTab === "photos" && styles.activeTab,
-                    ]}
-                    onPress={() => setActiveTab("photos")}
-                >
-                    <Text
-                        style={
-                            activeTab === "photos"
-                                ? styles.activeTabText
-                                : styles.tabText
-                        }
-                    >
-                        Photos
-                    </Text>
-                </TouchableOpacity>
             </View>
         </View>
     );
@@ -705,22 +592,17 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    profileInfoContainer: {
-        alignItems: "center",
-        paddingHorizontal: 16,
-        marginTop: -40,
-    },
-    profilePicContainer: {
+    profilePhotoContainer: {
         position: "relative",
     },
-    profilePic: {
+    profilePhoto: {
         width: 150,
         height: 150,
         borderRadius: 75,
         borderWidth: 4,
         borderColor: "#fff",
     },
-    editProfilePicButton: {
+    editProfilePhotoButton: {
         position: "absolute",
         right: 5,
         bottom: 5,
@@ -731,38 +613,48 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    userName: {
+    profileNameContainer: {
+        alignItems: "center",
+        paddingHorizontal: 16,
+        marginTop: -40,
+    },
+    profileName: {
         fontSize: 24,
         fontWeight: "bold",
         marginTop: 10,
         color: "#1c1e21",
     },
-    userBio: {
+    bio: {
         fontSize: 16,
         color: "#65676B",
         textAlign: "center",
         marginTop: 5,
         paddingHorizontal: 20,
     },
-    statsContainer: {
-        flexDirection: "row",
-        marginTop: 15,
+    editProfileButton: {
+        padding: 5,
     },
-    statItem: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginHorizontal: 10,
+    editProfileText: {
+        color: "#1877F2",
+        fontWeight: "500",
     },
-    statText: {
-        marginLeft: 5,
-        color: "#65676B",
-    },
-    actionsContainer: {
+    profileActions: {
         flexDirection: "row",
         marginTop: 15,
         width: "100%",
         paddingHorizontal: 16,
         marginBottom: 15,
+    },
+    divider: {
+        width: 1,
+        backgroundColor: "#E4E6EB",
+        marginHorizontal: 10,
+    },
+    actionButtons: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flex: 1,
     },
     actionButton: {
         flexDirection: "row",
@@ -773,76 +665,10 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         flex: 1,
     },
-    primaryButton: {
-        backgroundColor: "#1877F2",
-        marginRight: 8,
-    },
-    primaryButtonText: {
-        color: "#fff",
-        fontWeight: "500",
-        marginLeft: 5,
-    },
-    secondaryButton: {
-        backgroundColor: "#E4E6EB",
-        marginRight: 8,
-    },
-    secondaryButtonText: {
-        color: "#1877F2",
-        fontWeight: "500",
-        marginLeft: 5,
-    },
-    moreButton: {
-        backgroundColor: "#E4E6EB",
-        height: 36,
-        width: 36,
-        borderRadius: 18,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    tabsContainer: {
-        flexDirection: "row",
-        borderTopWidth: 1,
-        borderTopColor: "#E4E6EB",
-    },
-    tab: {
-        flex: 1,
-        paddingVertical: 15,
-        alignItems: "center",
-    },
-    activeTab: {
-        borderBottomWidth: 3,
-        borderBottomColor: "#1877F2",
-    },
-    tabText: {
+    actionButtonText: {
         color: "#65676B",
         fontWeight: "500",
-    },
-    activeTabText: {
-        color: "#1877F2",
-        fontWeight: "500",
-    },
-    emptyContainer: {
-        backgroundColor: "#fff",
-        padding: 30,
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 8,
-    },
-    emptyText: {
-        fontSize: 18,
-        color: "#65676B",
-        marginTop: 10,
-    },
-    createPostButton: {
-        backgroundColor: "#1877F2",
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 6,
-        marginTop: 15,
-    },
-    createPostText: {
-        color: "#fff",
-        fontWeight: "500",
+        marginLeft: 5,
     },
     aboutContainer: {
         backgroundColor: "#fff",
@@ -957,6 +783,29 @@ const styles = StyleSheet.create({
         marginTop: 15,
     },
     addPhotosText: {
+        color: "#fff",
+        fontWeight: "500",
+    },
+    emptyContainer: {
+        backgroundColor: "#fff",
+        padding: 30,
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 8,
+    },
+    emptyText: {
+        fontSize: 18,
+        color: "#65676B",
+        marginTop: 10,
+    },
+    createPostButton: {
+        backgroundColor: "#1877F2",
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 6,
+        marginTop: 15,
+    },
+    createPostText: {
         color: "#fff",
         fontWeight: "500",
     },

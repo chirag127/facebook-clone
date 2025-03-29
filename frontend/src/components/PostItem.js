@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { DEFAULT_PROFILE_IMAGE } from "../utils/constants";
+import { generateShareableUrl, shareContent } from "../utils/linkingUtils";
 
 const PostItem = ({
     post,
@@ -39,20 +40,59 @@ const PostItem = ({
     };
 
     const handleSharePress = () => {
+        const shareableUrl = generateShareableUrl("post", { postId: post._id });
+
         Alert.alert("Share Post", "Choose how you'd like to share this post", [
             {
                 text: "Share to News Feed",
-                onPress: () => console.log("Share to News Feed"),
+                onPress: () => {
+                    Alert.alert(
+                        "Share to News Feed",
+                        "Post has been shared to your news feed"
+                    );
+                },
             },
             {
                 text: "Share to Your Story",
-                onPress: () => console.log("Share to Story"),
+                onPress: () => {
+                    Alert.alert(
+                        "Share to Story",
+                        "Post has been shared to your story"
+                    );
+                },
             },
             {
                 text: "Send in Messenger",
-                onPress: () => console.log("Send in Messenger"),
+                onPress: () => {
+                    Alert.alert(
+                        "Send in Messenger",
+                        "Choose a friend to share with"
+                    );
+                },
             },
-            { text: "Copy Link", onPress: () => console.log("Copy Link") },
+            {
+                text: "Share via...",
+                onPress: () => {
+                    shareContent({
+                        title: `${post.user.name}'s Post`,
+                        message: post.text || "Check out this post!",
+                        url: shareableUrl,
+                    });
+                },
+            },
+            {
+                text: "Copy Link",
+                onPress: async () => {
+                    try {
+                        const { setStringAsync } = require("expo-clipboard");
+                        await setStringAsync(shareableUrl);
+                        Alert.alert("Success", "Link copied to clipboard");
+                    } catch (error) {
+                        console.error("Failed to copy link", error);
+                        Alert.alert("Error", "Failed to copy link");
+                    }
+                },
+            },
             { text: "Cancel", style: "cancel" },
         ]);
     };

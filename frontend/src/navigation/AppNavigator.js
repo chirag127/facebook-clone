@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { Linking } from "react-native";
 
 // Auth Screens
 import LoginScreen from "../screens/auth/LoginScreen";
@@ -33,6 +34,78 @@ import { AuthContext } from "../context/AuthContext";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+// Define linking configuration for deep links
+const linking = {
+  prefixes: ['https://fbclone.com', 'fbclone://'],
+  config: {
+    screens: {
+      Home: {
+        screens: {
+          HomeScreen: 'home',
+          PostDetail: {
+            path: 'post/:postId',
+            parse: {
+              postId: (postId) => postId,
+            },
+          },
+          UserProfile: {
+            path: 'user/:userId',
+            parse: {
+              userId: (userId) => userId,
+            },
+          },
+        },
+      },
+      Profile: {
+        screens: {
+          ProfileScreen: 'profile',
+          EditProfile: 'profile/edit',
+        },
+      },
+      Friends: 'friends',
+      Notifications: 'notifications',
+      Menu: {
+        screens: {
+          MenuScreen: 'menu',
+          Saved: 'saved',
+          Groups: 'groups',
+          Marketplace: 'marketplace',
+          Memories: 'memories',
+          Pages: 'pages',
+          Events: 'events',
+          Settings: 'settings',
+          Help: 'help',
+        },
+      },
+      Login: 'login',
+      Register: 'register',
+    },
+  },
+  // Custom function to handle deep links outside of react-navigation
+  async getInitialURL() {
+    // First, check if the app was opened from a deep link
+    const url = await Linking.getInitialURL();
+    if (url != null) {
+      return url;
+    }
+
+    // Check for URL in the bundle URL
+    return null;
+  },
+  // Custom function to subscribe to incoming links
+  subscribe(listener) {
+    // Listen to incoming links
+    const linkingSubscription = Linking.addEventListener('url', ({ url }) => {
+      listener(url);
+    });
+
+    return () => {
+      // Clean up subscription when the component is unmounted
+      linkingSubscription.remove();
+    };
+  },
+};
 
 const HomeStack = () => {
     return (
@@ -170,7 +243,7 @@ const AppNavigator = () => {
     }
 
     return (
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
             {userToken !== null ? <MainTabNavigator /> : <AuthStack />}
         </NavigationContainer>
     );
