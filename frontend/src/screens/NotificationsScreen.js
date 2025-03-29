@@ -6,6 +6,7 @@ import {
     FlatList,
     TouchableOpacity,
     Image,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -157,6 +158,15 @@ const NotificationsScreen = ({ navigation }) => {
                 styles.notificationItem,
                 !item.read && styles.unreadNotification,
             ]}
+            onPress={() =>
+                Alert.alert(
+                    `${
+                        item.type.charAt(0).toUpperCase() + item.type.slice(1)
+                    } Notification`,
+                    `${item.user.name} ${item.content}`,
+                    [{ text: "OK" }]
+                )
+            }
         >
             <View style={styles.notificationContent}>
                 <View style={styles.profileContainer}>
@@ -176,7 +186,21 @@ const NotificationsScreen = ({ navigation }) => {
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.moreButton}>
+            <TouchableOpacity
+                style={styles.moreButton}
+                onPress={() =>
+                    Alert.alert(
+                        "Notification Options",
+                        "Choose an action for this notification",
+                        [
+                            { text: "Cancel", style: "cancel" },
+                            { text: "Mark as Read" },
+                            { text: "Hide Notification" },
+                            { text: "Turn Off Notifications of This Type" },
+                        ]
+                    )
+                }
+            >
                 <Ionicons
                     name="ellipsis-horizontal"
                     size={20}
@@ -190,7 +214,16 @@ const NotificationsScreen = ({ navigation }) => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>Notifications</Text>
-                <TouchableOpacity style={styles.searchButton}>
+                <TouchableOpacity
+                    style={styles.searchButton}
+                    onPress={() =>
+                        Alert.alert(
+                            "Search Notifications",
+                            "Search for specific notifications",
+                            [{ text: "OK" }]
+                        )
+                    }
+                >
                     <Ionicons name="search" size={22} color="#000" />
                 </TouchableOpacity>
             </View>
@@ -203,10 +236,24 @@ const NotificationsScreen = ({ navigation }) => {
                     <View style={styles.filterContainer}>
                         <TouchableOpacity
                             style={[styles.filterButton, styles.activeFilter]}
+                            onPress={() =>
+                                Alert.alert(
+                                    "All Notifications",
+                                    "Showing all notifications"
+                                )
+                            }
                         >
                             <Text style={styles.activeFilterText}>All</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.filterButton}>
+                        <TouchableOpacity
+                            style={styles.filterButton}
+                            onPress={() =>
+                                Alert.alert(
+                                    "Unread Notifications",
+                                    "Showing only unread notifications"
+                                )
+                            }
+                        >
                             <Text style={styles.filterText}>Unread</Text>
                         </TouchableOpacity>
                     </View>

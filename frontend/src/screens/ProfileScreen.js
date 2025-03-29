@@ -8,6 +8,7 @@ import {
     ScrollView,
     FlatList,
     ActivityIndicator,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
@@ -63,7 +64,20 @@ const ProfileScreen = ({ navigation }) => {
                     }}
                     style={styles.coverPhoto}
                 />
-                <TouchableOpacity style={styles.editCoverButton}>
+                <TouchableOpacity
+                    style={styles.editCoverButton}
+                    onPress={() =>
+                        Alert.alert(
+                            "Change Cover Photo",
+                            "Update your cover photo",
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                { text: "Choose from Gallery" },
+                                { text: "Take Photo" },
+                            ]
+                        )
+                    }
+                >
                     <Ionicons name="camera" size={20} color="#fff" />
                 </TouchableOpacity>
             </View>
@@ -78,7 +92,20 @@ const ProfileScreen = ({ navigation }) => {
                         }}
                         style={styles.profilePic}
                     />
-                    <TouchableOpacity style={styles.editProfilePicButton}>
+                    <TouchableOpacity
+                        style={styles.editProfilePicButton}
+                        onPress={() =>
+                            Alert.alert(
+                                "Change Profile Picture",
+                                "Update your profile picture",
+                                [
+                                    { text: "Cancel", style: "cancel" },
+                                    { text: "Choose from Gallery" },
+                                    { text: "Take Photo" },
+                                ]
+                            )
+                        }
+                    >
                         <Ionicons name="camera" size={20} color="#fff" />
                     </TouchableOpacity>
                 </View>
@@ -113,7 +140,16 @@ const ProfileScreen = ({ navigation }) => {
                 <View style={styles.actionsContainer}>
                     <TouchableOpacity
                         style={[styles.actionButton, styles.primaryButton]}
-                        onPress={() => navigation.navigate("EditProfile")}
+                        onPress={() =>
+                            Alert.alert(
+                                "Add to Story",
+                                "Create a new story to share with your friends",
+                                [
+                                    { text: "Cancel", style: "cancel" },
+                                    { text: "Create Story" },
+                                ]
+                            )
+                        }
                     >
                         <Ionicons name="add-circle" size={18} color="#fff" />
                         <Text style={styles.primaryButtonText}>
@@ -131,7 +167,17 @@ const ProfileScreen = ({ navigation }) => {
                         </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.moreButton}>
+                    <TouchableOpacity
+                        style={styles.moreButton}
+                        onPress={() =>
+                            Alert.alert("More Options", "Choose an action", [
+                                { text: "Cancel", style: "cancel" },
+                                { text: "View Activity Log" },
+                                { text: "Archive" },
+                                { text: "Settings" },
+                            ])
+                        }
+                    >
                         <Ionicons
                             name="ellipsis-horizontal"
                             size={20}

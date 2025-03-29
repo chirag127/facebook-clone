@@ -10,6 +10,7 @@ import {
     RefreshControl,
     ActivityIndicator,
     ScrollView,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
@@ -120,12 +121,27 @@ const HomeScreen = ({ navigation }) => {
         },
     ];
 
+    const handleCreateStory = () => {
+        Alert.alert(
+            "Create Story",
+            "This feature will allow you to create and share stories with your friends.",
+            [{ text: "Cancel", style: "cancel" }, { text: "OK" }]
+        );
+    };
+
+    const handleViewStory = (story) => {
+        Alert.alert("View Story", `Viewing ${story.user.name}'s story`, [
+            { text: "OK" },
+        ]);
+    };
+
     const renderStory = (story) => {
         if (story.isCreateStory) {
             return (
                 <TouchableOpacity
                     key={story.id}
                     style={styles.createStoryContainer}
+                    onPress={handleCreateStory}
                 >
                     <View style={styles.storyImageContainer}>
                         <Image
@@ -150,7 +166,11 @@ const HomeScreen = ({ navigation }) => {
         }
 
         return (
-            <TouchableOpacity key={story.id} style={styles.storyContainer}>
+            <TouchableOpacity
+                key={story.id}
+                style={styles.storyContainer}
+                onPress={() => handleViewStory(story)}
+            >
                 <View style={styles.storyImageContainer}>
                     <Image
                         source={{ uri: story.image }}
@@ -203,7 +223,16 @@ const HomeScreen = ({ navigation }) => {
             <View style={styles.divider} />
 
             <View style={styles.actionsContainer}>
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() =>
+                        Alert.alert(
+                            "Live Video",
+                            "Start a live video broadcast to connect with your friends in real-time.",
+                            [{ text: "OK" }]
+                        )
+                    }
+                >
                     <Ionicons name="videocam" size={22} color="#F44337" />
                     <Text style={styles.actionText}>Live</Text>
                 </TouchableOpacity>
@@ -220,7 +249,16 @@ const HomeScreen = ({ navigation }) => {
 
                 <View style={styles.actionDivider} />
 
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() =>
+                        Alert.alert(
+                            "Feeling/Activity",
+                            "Share how you're feeling or what you're doing right now.",
+                            [{ text: "OK" }]
+                        )
+                    }
+                >
                     <Ionicons name="happy" size={22} color="#FFC107" />
                     <Text style={styles.actionText}>Feeling</Text>
                 </TouchableOpacity>
@@ -241,10 +279,28 @@ const HomeScreen = ({ navigation }) => {
             <View style={styles.topBar}>
                 <Text style={styles.logo}>facebook</Text>
                 <View style={styles.topBarIcons}>
-                    <TouchableOpacity style={styles.iconButton}>
+                    <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() =>
+                            Alert.alert(
+                                "Search",
+                                "Search for people, posts, and more.",
+                                [{ text: "OK" }]
+                            )
+                        }
+                    >
                         <Ionicons name="search" size={24} color="#000" />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconButton}>
+                    <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() =>
+                            Alert.alert(
+                                "Messenger",
+                                "Chat with your friends and connections.",
+                                [{ text: "OK" }]
+                            )
+                        }
+                    >
                         <Ionicons
                             name="chatbubble-ellipses"
                             size={24}

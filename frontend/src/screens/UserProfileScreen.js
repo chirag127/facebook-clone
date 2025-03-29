@@ -186,7 +186,16 @@ const UserProfileScreen = ({ route, navigation }) => {
                         </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.actionButton}>
+                    <TouchableOpacity
+                        style={styles.actionButton}
+                        onPress={() =>
+                            Alert.alert(
+                                "Message",
+                                `Send a message to ${user?.name}`,
+                                [{ text: "OK" }]
+                            )
+                        }
+                    >
                         <Ionicons name="chatbubble" size={18} color="#1877F2" />
                         <Text style={styles.secondaryButtonText}>Message</Text>
                     </TouchableOpacity>
@@ -194,16 +203,36 @@ const UserProfileScreen = ({ route, navigation }) => {
             </View>
 
             <View style={styles.tabsContainer}>
-                <TouchableOpacity style={[styles.tab, styles.activeTab]}>
+                <TouchableOpacity
+                    style={[styles.tab, styles.activeTab]}
+                    onPress={() =>
+                        Alert.alert("Posts", "View all posts from this user")
+                    }
+                >
                     <Text style={styles.activeTabText}>Posts</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.tab}>
+                <TouchableOpacity
+                    style={styles.tab}
+                    onPress={() =>
+                        Alert.alert("About", "View information about this user")
+                    }
+                >
                     <Text style={styles.tabText}>About</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.tab}>
+                <TouchableOpacity
+                    style={styles.tab}
+                    onPress={() =>
+                        Alert.alert("Friends", "View this user's friends")
+                    }
+                >
                     <Text style={styles.tabText}>Friends</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.tab}>
+                <TouchableOpacity
+                    style={styles.tab}
+                    onPress={() =>
+                        Alert.alert("Photos", "View photos from this user")
+                    }
+                >
                     <Text style={styles.tabText}>Photos</Text>
                 </TouchableOpacity>
             </View>

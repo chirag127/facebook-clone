@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     Image,
     ScrollView,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -58,7 +59,16 @@ const MarketplaceScreen = ({ navigation }) => {
     ];
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={styles.itemCard}>
+        <TouchableOpacity
+            style={styles.itemCard}
+            onPress={() =>
+                Alert.alert(
+                    item.title,
+                    `${item.price} - ${item.location}\n\nView details for this item`,
+                    [{ text: "OK" }]
+                )
+            }
+        >
             <Image source={{ uri: item.image }} style={styles.itemImage} />
             <View style={styles.itemInfo}>
                 <Text style={styles.itemPrice}>{item.price}</Text>
@@ -78,10 +88,28 @@ const MarketplaceScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Marketplace</Text>
                 <View style={styles.headerIcons}>
-                    <TouchableOpacity style={styles.iconButton}>
+                    <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() =>
+                            Alert.alert(
+                                "Search Marketplace",
+                                "Search for items to buy",
+                                [{ text: "OK" }]
+                            )
+                        }
+                    >
                         <Ionicons name="search" size={24} color="#1877F2" />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconButton}>
+                    <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() =>
+                            Alert.alert(
+                                "Marketplace Notifications",
+                                "View your marketplace notifications",
+                                [{ text: "OK" }]
+                            )
+                        }
+                    >
                         <Ionicons
                             name="notifications"
                             size={24}
@@ -97,22 +125,58 @@ const MarketplaceScreen = ({ navigation }) => {
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.categoriesContent}
                 >
-                    <TouchableOpacity style={styles.categoryButton}>
+                    <TouchableOpacity
+                        style={styles.categoryButton}
+                        onPress={() =>
+                            Alert.alert(
+                                "All Categories",
+                                "Showing all marketplace items"
+                            )
+                        }
+                    >
                         <Text style={styles.categoryText}>All</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.categoryButton}>
+                    <TouchableOpacity
+                        style={styles.categoryButton}
+                        onPress={() =>
+                            Alert.alert(
+                                "Electronics",
+                                "Showing electronics items"
+                            )
+                        }
+                    >
                         <Text style={styles.categoryText}>Electronics</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.categoryButton}>
+                    <TouchableOpacity
+                        style={styles.categoryButton}
+                        onPress={() =>
+                            Alert.alert("Furniture", "Showing furniture items")
+                        }
+                    >
                         <Text style={styles.categoryText}>Furniture</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.categoryButton}>
+                    <TouchableOpacity
+                        style={styles.categoryButton}
+                        onPress={() =>
+                            Alert.alert("Clothing", "Showing clothing items")
+                        }
+                    >
                         <Text style={styles.categoryText}>Clothing</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.categoryButton}>
+                    <TouchableOpacity
+                        style={styles.categoryButton}
+                        onPress={() =>
+                            Alert.alert("Vehicles", "Showing vehicle listings")
+                        }
+                    >
                         <Text style={styles.categoryText}>Vehicles</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.categoryButton}>
+                    <TouchableOpacity
+                        style={styles.categoryButton}
+                        onPress={() =>
+                            Alert.alert("Property", "Showing property listings")
+                        }
+                    >
                         <Text style={styles.categoryText}>Property</Text>
                     </TouchableOpacity>
                 </ScrollView>

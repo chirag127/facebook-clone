@@ -6,6 +6,7 @@ import {
     FlatList,
     TouchableOpacity,
     Image,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -43,7 +44,16 @@ const GroupsScreen = ({ navigation }) => {
     ];
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={styles.groupItem}>
+        <TouchableOpacity
+            style={styles.groupItem}
+            onPress={() =>
+                Alert.alert(
+                    item.name,
+                    `View details for ${item.name} group with ${item.members}`,
+                    [{ text: "OK" }]
+                )
+            }
+        >
             <Image source={{ uri: item.image }} style={styles.groupImage} />
             <View style={styles.groupInfo}>
                 <Text style={styles.groupName}>{item.name}</Text>
@@ -54,6 +64,18 @@ const GroupsScreen = ({ navigation }) => {
                     styles.joinButton,
                     item.isJoined ? styles.joinedButton : {},
                 ]}
+                onPress={() =>
+                    Alert.alert(
+                        item.isJoined ? "Leave Group" : "Join Group",
+                        item.isJoined
+                            ? `Are you sure you want to leave ${item.name}?`
+                            : `Join ${item.name} group with ${item.members}`,
+                        [
+                            { text: "Cancel", style: "cancel" },
+                            { text: item.isJoined ? "Leave" : "Join" },
+                        ]
+                    )
+                }
             >
                 <Text
                     style={[
@@ -74,23 +96,56 @@ const GroupsScreen = ({ navigation }) => {
                     <Ionicons name="arrow-back" size={24} color="#1877F2" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Groups</Text>
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() =>
+                        Alert.alert(
+                            "Search Groups",
+                            "Search for groups by name or topic",
+                            [{ text: "OK" }]
+                        )
+                    }
+                >
                     <Ionicons name="search" size={24} color="#1877F2" />
                 </TouchableOpacity>
             </View>
 
             <View style={styles.tabs}>
-                <TouchableOpacity style={[styles.tab, styles.activeTab]}>
+                <TouchableOpacity
+                    style={[styles.tab, styles.activeTab]}
+                    onPress={() =>
+                        Alert.alert("Your Groups", "View groups you've joined")
+                    }
+                >
                     <Text style={[styles.tabText, styles.activeTabText]}>
                         Your Groups
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.tab}>
+                <TouchableOpacity
+                    style={styles.tab}
+                    onPress={() =>
+                        Alert.alert(
+                            "Discover Groups",
+                            "Find new groups to join"
+                        )
+                    }
+                >
                     <Text style={styles.tabText}>Discover</Text>
                 </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.createGroupButton}>
+            <TouchableOpacity
+                style={styles.createGroupButton}
+                onPress={() =>
+                    Alert.alert(
+                        "Create New Group",
+                        "Start a new group and invite your friends",
+                        [
+                            { text: "Cancel", style: "cancel" },
+                            { text: "Create" },
+                        ]
+                    )
+                }
+            >
                 <Ionicons name="add-circle" size={24} color="#1877F2" />
                 <Text style={styles.createGroupText}>Create New Group</Text>
             </TouchableOpacity>
