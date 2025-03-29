@@ -9,6 +9,7 @@ import {
     Image,
     RefreshControl,
     ActivityIndicator,
+    ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
@@ -68,6 +69,118 @@ const HomeScreen = ({ navigation }) => {
         }
     };
 
+    // Generate mock stories
+    const stories = [
+        {
+            id: "1",
+            user: {
+                name: "Create Story",
+                profilePicture:
+                    userInfo?.profilePicture || DEFAULT_PROFILE_IMAGE,
+            },
+            isCreateStory: true,
+        },
+        {
+            id: "2",
+            user: {
+                name: "John Doe",
+                profilePicture: "https://randomuser.me/api/portraits/men/1.jpg",
+            },
+            image: "https://picsum.photos/id/237/200/300",
+            viewed: false,
+        },
+        {
+            id: "3",
+            user: {
+                name: "Jane Smith",
+                profilePicture:
+                    "https://randomuser.me/api/portraits/women/2.jpg",
+            },
+            image: "https://picsum.photos/id/238/200/300",
+            viewed: false,
+        },
+        {
+            id: "4",
+            user: {
+                name: "Robert Johnson",
+                profilePicture: "https://randomuser.me/api/portraits/men/3.jpg",
+            },
+            image: "https://picsum.photos/id/239/200/300",
+            viewed: true,
+        },
+        {
+            id: "5",
+            user: {
+                name: "Sarah Williams",
+                profilePicture:
+                    "https://randomuser.me/api/portraits/women/4.jpg",
+            },
+            image: "https://picsum.photos/id/240/200/300",
+            viewed: false,
+        },
+    ];
+
+    const renderStory = (story) => {
+        if (story.isCreateStory) {
+            return (
+                <TouchableOpacity
+                    key={story.id}
+                    style={styles.createStoryContainer}
+                >
+                    <View style={styles.storyImageContainer}>
+                        <Image
+                            source={{ uri: story.user.profilePicture }}
+                            style={styles.storyImage}
+                        />
+                        <View style={styles.addStoryButton}>
+                            <Ionicons
+                                name="add-circle"
+                                size={32}
+                                color="#1877F2"
+                                style={{
+                                    backgroundColor: "white",
+                                    borderRadius: 16,
+                                }}
+                            />
+                        </View>
+                    </View>
+                    <Text style={styles.createStoryText}>Create Story</Text>
+                </TouchableOpacity>
+            );
+        }
+
+        return (
+            <TouchableOpacity key={story.id} style={styles.storyContainer}>
+                <View style={styles.storyImageContainer}>
+                    <Image
+                        source={{ uri: story.image }}
+                        style={styles.storyImage}
+                    />
+                    <View
+                        style={[
+                            styles.storyProfilePicContainer,
+                            { borderColor: story.viewed ? "#ccc" : "#1877F2" },
+                        ]}
+                    >
+                        <Image
+                            source={{ uri: story.user.profilePicture }}
+                            style={styles.storyProfilePic}
+                        />
+                    </View>
+                </View>
+                <Text style={styles.storyUsername}>{story.user.name}</Text>
+            </TouchableOpacity>
+        );
+    };
+
+    const renderStories = () => (
+        <View style={styles.storiesContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {stories.map(renderStory)}
+            </ScrollView>
+        </View>
+    );
+
     const renderHeader = () => (
         <View style={styles.header}>
             <View style={styles.createPostContainer}>
@@ -97,7 +210,10 @@ const HomeScreen = ({ navigation }) => {
 
                 <View style={styles.actionDivider} />
 
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() => setModalVisible(true)}
+                >
                     <Ionicons name="images" size={22} color="#4CAF50" />
                     <Text style={styles.actionText}>Photo</Text>
                 </TouchableOpacity>
@@ -158,7 +274,12 @@ const HomeScreen = ({ navigation }) => {
                         currentUserId={userInfo?._id}
                     />
                 )}
-                ListHeaderComponent={renderHeader}
+                ListHeaderComponent={
+                    <>
+                        {renderStories()}
+                        {renderHeader()}
+                    </>
+                }
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -194,6 +315,8 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: "#fff",
         elevation: 2,
+        borderBottomWidth: 1,
+        borderBottomColor: "#E4E6EB",
     },
     logo: {
         color: "#1877F2",
@@ -211,6 +334,62 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginLeft: 10,
+    },
+    storiesContainer: {
+        paddingVertical: 10,
+        backgroundColor: "#fff",
+        marginBottom: 8,
+    },
+    storyContainer: {
+        width: 110,
+        marginLeft: 10,
+        position: "relative",
+    },
+    createStoryContainer: {
+        width: 110,
+        marginLeft: 10,
+        position: "relative",
+    },
+    storyImageContainer: {
+        height: 170,
+        borderRadius: 10,
+        overflow: "hidden",
+        position: "relative",
+        borderWidth: 1,
+        borderColor: "#E4E6EB",
+    },
+    storyImage: {
+        width: "100%",
+        height: "100%",
+    },
+    storyProfilePicContainer: {
+        position: "absolute",
+        top: 8,
+        left: 8,
+        borderWidth: 4,
+        borderColor: "#1877F2",
+        borderRadius: 20,
+    },
+    storyProfilePic: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+    },
+    storyUsername: {
+        marginTop: 4,
+        fontSize: 12,
+        color: "#1c1e21",
+    },
+    createStoryText: {
+        marginTop: 4,
+        fontSize: 12,
+        fontWeight: "bold",
+        color: "#1c1e21",
+    },
+    addStoryButton: {
+        position: "absolute",
+        bottom: 8,
+        alignSelf: "center",
     },
     header: {
         backgroundColor: "#fff",
@@ -252,15 +431,17 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        paddingVertical: 8,
+        paddingVertical: 6,
     },
     actionText: {
         marginLeft: 5,
+        fontWeight: "500",
         color: "#65676B",
     },
     actionDivider: {
         width: 1,
         backgroundColor: "#E4E6EB",
+        marginHorizontal: 4,
     },
 });
 
