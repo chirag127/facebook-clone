@@ -1,5 +1,31 @@
 import React, { createContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
+
+// Create a wrapper for SecureStore to handle API changes
+const secureStorage = {
+    setItem: async (key, value) => {
+        try {
+            return await SecureStore.setItemAsync(key, value);
+        } catch (error) {
+            console.log("SecureStore setItem error:", error);
+        }
+    },
+    getItem: async (key) => {
+        try {
+            return await SecureStore.getItemAsync(key);
+        } catch (error) {
+            console.log("SecureStore getItem error:", error);
+            return null;
+        }
+    },
+    deleteItem: async (key) => {
+        try {
+            return await SecureStore.deleteItemAsync(key);
+        } catch (error) {
+            console.log("SecureStore deleteItem error:", error);
+        }
+    },
+};
 import axios from "axios";
 
 export const AuthContext = createContext();
@@ -35,8 +61,8 @@ export const AuthProvider = ({ children }) => {
             setUserInfo(userResponse.data.data);
 
             // Store token in secure storage
-            await SecureStore.setItemAsync("userToken", token);
-            await SecureStore.setItemAsync(
+            await secureStorage.setItem("userToken", token);
+            await secureStorage.setItem(
                 "userInfo",
                 JSON.stringify(userResponse.data.data)
             );
@@ -74,8 +100,8 @@ export const AuthProvider = ({ children }) => {
             setUserInfo(userResponse.data.data);
 
             // Store token in secure storage
-            await SecureStore.setItemAsync("userToken", token);
-            await SecureStore.setItemAsync(
+            await secureStorage.setItem("userToken", token);
+            await secureStorage.setItem(
                 "userInfo",
                 JSON.stringify(userResponse.data.data)
             );
@@ -95,8 +121,8 @@ export const AuthProvider = ({ children }) => {
         setUserToken(null);
         setUserInfo(null);
 
-        await SecureStore.deleteItemAsync("userToken");
-        await SecureStore.deleteItemAsync("userInfo");
+        await secureStorage.deleteItem("userToken");
+        await secureStorage.deleteItem("userInfo");
 
         setIsLoading(false);
     };
@@ -105,8 +131,8 @@ export const AuthProvider = ({ children }) => {
         try {
             setIsLoading(true);
 
-            let userToken = await SecureStore.getItemAsync("userToken");
-            let userInfo = await SecureStore.getItemAsync("userInfo");
+            let userToken = await secureStorage.getItem("userToken");
+            let userInfo = await secureStorage.getItem("userInfo");
 
             if (userInfo) {
                 userInfo = JSON.parse(userInfo);

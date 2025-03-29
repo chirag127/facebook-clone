@@ -12,6 +12,7 @@ import {
     ActivityIndicator,
 } from "react-native";
 import { AuthContext } from "../../context/AuthContext";
+import { FACEBOOK_LOGO } from "../../utils/constants";
 
 const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState("");
@@ -30,7 +31,7 @@ const LoginScreen = ({ navigation }) => {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.logoContainer}>
                     <Image
-                        source={require("../../../assets/facebook-logo.svg")}
+                        source={{ uri: FACEBOOK_LOGO }}
                         style={styles.logo}
                         resizeMode="contain"
                     />

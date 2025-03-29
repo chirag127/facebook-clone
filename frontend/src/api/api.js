@@ -1,6 +1,32 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
+// Create a wrapper for SecureStore to handle API changes
+const secureStorage = {
+    setItem: async (key, value) => {
+        try {
+            return await SecureStore.setItemAsync(key, value);
+        } catch (error) {
+            console.log("SecureStore setItem error:", error);
+        }
+    },
+    getItem: async (key) => {
+        try {
+            return await SecureStore.getItemAsync(key);
+        } catch (error) {
+            console.log("SecureStore getItem error:", error);
+            return null;
+        }
+    },
+    deleteItem: async (key) => {
+        try {
+            return await SecureStore.deleteItemAsync(key);
+        } catch (error) {
+            console.log("SecureStore deleteItem error:", error);
+        }
+    },
+};
+
 const API_URL = "http://10.0.2.2:5000/api"; // For Android emulator
 
 const api = axios.create({
@@ -13,7 +39,7 @@ const api = axios.create({
 // Add a request interceptor to add the auth token to every request
 api.interceptors.request.use(
     async (config) => {
-        const token = await SecureStore.getItemAsync("userToken");
+        const token = await secureStorage.getItem("userToken");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
