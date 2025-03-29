@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
+import { DEFAULT_PROFILE_IMAGE } from "../utils/constants";
 
 const MenuScreen = ({ navigation }) => {
     const { userInfo, logout } = useContext(AuthContext);
@@ -52,6 +53,19 @@ const MenuScreen = ({ navigation }) => {
                 break;
             default:
                 break;
+        }
+    };
+
+    // Check if a screen exists in the navigation
+    const handleNavigation = (screen) => {
+        try {
+            navigation.navigate(screen);
+        } catch (error) {
+            Alert.alert(
+                "Feature Coming Soon",
+                `The ${screen} feature is currently under development`,
+                [{ text: "OK" }]
+            );
         }
     };
 
@@ -178,7 +192,7 @@ const MenuScreen = ({ navigation }) => {
                         source={{
                             uri:
                                 userInfo?.profilePicture ||
-                                "https://via.placeholder.com/150",
+                                DEFAULT_PROFILE_IMAGE,
                         }}
                         style={styles.profilePic}
                     />
@@ -210,9 +224,36 @@ const MenuScreen = ({ navigation }) => {
 
                 <View style={styles.footer}>
                     <Text style={styles.footerText}>Facebook © 2023</Text>
-                    <Text style={styles.footerLink}>About</Text>
-                    <Text style={styles.footerLink}>Terms</Text>
-                    <Text style={styles.footerLink}>Privacy</Text>
+                    <TouchableOpacity
+                        onPress={() =>
+                            Alert.alert(
+                                "About",
+                                "Facebook helps you connect and share with the people in your life."
+                            )
+                        }
+                    >
+                        <Text style={styles.footerLink}>About</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() =>
+                            Alert.alert(
+                                "Terms",
+                                "By using our service, you agree to our Terms of Service."
+                            )
+                        }
+                    >
+                        <Text style={styles.footerLink}>Terms</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() =>
+                            Alert.alert(
+                                "Privacy",
+                                "Your privacy is important to us. Learn how we use your data."
+                            )
+                        }
+                    >
+                        <Text style={styles.footerLink}>Privacy</Text>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
         </View>

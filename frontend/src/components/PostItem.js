@@ -38,6 +38,34 @@ const PostItem = ({
         }
     };
 
+    const handleSharePress = () => {
+        Alert.alert("Share Post", "Choose how you'd like to share this post", [
+            {
+                text: "Share to News Feed",
+                onPress: () => console.log("Share to News Feed"),
+            },
+            {
+                text: "Share to Your Story",
+                onPress: () => console.log("Share to Story"),
+            },
+            {
+                text: "Send in Messenger",
+                onPress: () => console.log("Send in Messenger"),
+            },
+            { text: "Copy Link", onPress: () => console.log("Copy Link") },
+            { text: "Cancel", style: "cancel" },
+        ]);
+    };
+
+    const handleMorePress = () => {
+        Alert.alert("Post Options", "Choose an action for this post", [
+            { text: "Save Post", onPress: () => console.log("Save Post") },
+            { text: "Hide Post", onPress: () => console.log("Hide Post") },
+            { text: "Report Post", onPress: () => console.log("Report Post") },
+            { text: "Cancel", style: "cancel" },
+        ]);
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -67,23 +95,7 @@ const PostItem = ({
 
                 <TouchableOpacity
                     style={styles.moreButton}
-                    onPress={() => {
-                        Alert.alert("Post Options", "Choose an action", [
-                            {
-                                text: "Save Post",
-                                onPress: () => console.log("Post saved"),
-                            },
-                            {
-                                text: "Report Post",
-                                onPress: () => console.log("Post reported"),
-                            },
-                            {
-                                text: "Hide Post",
-                                onPress: () => console.log("Post hidden"),
-                            },
-                            { text: "Cancel", style: "cancel" },
-                        ]);
-                    }}
+                    onPress={handleMorePress}
                 >
                     <Ionicons
                         name="ellipsis-horizontal"
@@ -96,20 +108,35 @@ const PostItem = ({
             <Text style={styles.postText}>{post.text}</Text>
 
             {post.image && (
-                <Image
-                    source={{ uri: post.image }}
-                    style={styles.postImage}
-                    resizeMode="cover"
-                />
+                <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() =>
+                        Alert.alert("Full Image", "View full size image")
+                    }
+                >
+                    <Image
+                        source={{ uri: post.image }}
+                        style={styles.postImage}
+                        resizeMode="cover"
+                    />
+                </TouchableOpacity>
             )}
 
             <View style={styles.postStats}>
-                <View style={styles.likesContainer}>
+                <TouchableOpacity
+                    style={styles.likesContainer}
+                    onPress={() =>
+                        Alert.alert(
+                            "Likes",
+                            `${post.likes.length} people liked this post`
+                        )
+                    }
+                >
                     <View style={styles.likeIcon}>
                         <Ionicons name="thumbs-up" size={12} color="#fff" />
                     </View>
                     <Text style={styles.statsText}>{post.likes.length}</Text>
-                </View>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={onComment}>
                     <Text style={styles.statsText}>
                         {post.comments.length} comments
@@ -153,31 +180,7 @@ const PostItem = ({
 
                 <TouchableOpacity
                     style={styles.actionButton}
-                    onPress={() => {
-                        Alert.alert(
-                            "Share Post",
-                            "Share this post with friends",
-                            [
-                                {
-                                    text: "Share Now",
-                                    onPress: () => console.log("Post shared"),
-                                },
-                                {
-                                    text: "Write Post",
-                                    onPress: () =>
-                                        console.log(
-                                            "Write post with shared content"
-                                        ),
-                                },
-                                {
-                                    text: "Share to Messenger",
-                                    onPress: () =>
-                                        console.log("Share to Messenger"),
-                                },
-                                { text: "Cancel", style: "cancel" },
-                            ]
-                        );
-                    }}
+                    onPress={handleSharePress}
                 >
                     <Ionicons
                         name="share-social-outline"
@@ -196,6 +199,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         marginBottom: 8,
         padding: 12,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 1,
+        elevation: 1,
     },
     header: {
         flexDirection: "row",

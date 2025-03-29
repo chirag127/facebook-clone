@@ -21,6 +21,7 @@ import {
     updateCoverPhoto,
 } from "../api/api";
 import PostItem from "../components/PostItem";
+import { DEFAULT_PROFILE_IMAGE, DEFAULT_COVER_IMAGE } from "../utils/constants";
 
 const ProfileScreen = ({ navigation }) => {
     const { userInfo, logout, setUserInfo } = useContext(AuthContext);
@@ -233,14 +234,26 @@ const ProfileScreen = ({ navigation }) => {
         }
     };
 
+    const handleCreatePost = () => {
+        Alert.alert("Create Post", "Share what's on your mind", [
+            { text: "Cancel", style: "cancel" },
+            { text: "Create", onPress: () => navigation.navigate("Home") },
+        ]);
+    };
+
+    const handleAddStory = () => {
+        Alert.alert("Add to Story", "Share a photo or write something", [
+            { text: "Cancel", style: "cancel" },
+            { text: "Add", onPress: () => console.log("Adding to story") },
+        ]);
+    };
+
     const ProfileHeader = () => (
         <View style={styles.profileHeader}>
             <View style={styles.coverPhotoContainer}>
                 <Image
                     source={{
-                        uri:
-                            userInfo?.coverPhoto ||
-                            "https://via.placeholder.com/800x300",
+                        uri: userInfo?.coverPhoto || DEFAULT_COVER_IMAGE,
                     }}
                     style={styles.coverPhoto}
                 />
@@ -248,16 +261,8 @@ const ProfileScreen = ({ navigation }) => {
                     style={styles.editCoverButton}
                     onPress={() =>
                         Alert.alert(
-                            "Change Cover Photo",
-                            "Update your cover photo",
-                            [
-                                { text: "Cancel", style: "cancel" },
-                                {
-                                    text: "Choose from Gallery",
-                                    onPress: pickCoverPhoto,
-                                },
-                                { text: "Take Photo", onPress: takeCoverPhoto },
-                            ]
+                            "Edit Cover Photo",
+                            "Upload a new cover photo for your profile."
                         )
                     }
                 >
@@ -271,7 +276,7 @@ const ProfileScreen = ({ navigation }) => {
                         source={{
                             uri:
                                 userInfo?.profilePicture ||
-                                "https://via.placeholder.com/150",
+                                DEFAULT_PROFILE_IMAGE,
                         }}
                         style={styles.profilePic}
                     />
@@ -279,19 +284,8 @@ const ProfileScreen = ({ navigation }) => {
                         style={styles.editProfilePicButton}
                         onPress={() =>
                             Alert.alert(
-                                "Change Profile Picture",
-                                "Update your profile picture",
-                                [
-                                    { text: "Cancel", style: "cancel" },
-                                    {
-                                        text: "Choose from Gallery",
-                                        onPress: pickProfileImage,
-                                    },
-                                    {
-                                        text: "Take Photo",
-                                        onPress: takeProfilePhoto,
-                                    },
-                                ]
+                                "Edit Profile Picture",
+                                "Upload a new profile picture."
                             )
                         }
                     >
@@ -306,39 +300,39 @@ const ProfileScreen = ({ navigation }) => {
                 </Text>
 
                 <View style={styles.statsContainer}>
-                    <View style={styles.statItem}>
+                    <TouchableOpacity
+                        style={styles.statItem}
+                        onPress={() => navigation.navigate("Friends")}
+                    >
                         <Ionicons name="people" size={18} color="#65676B" />
                         <Text style={styles.statText}>
                             {userInfo?.friends?.length || 0} Friends
                         </Text>
-                    </View>
-                    <View style={styles.statItem}>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.statItem}
+                        onPress={() => setActiveTab("about")}
+                    >
                         <Ionicons name="location" size={18} color="#65676B" />
                         <Text style={styles.statText}>
                             {userInfo?.location || "Add location"}
                         </Text>
-                    </View>
-                    <View style={styles.statItem}>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.statItem}
+                        onPress={() => setActiveTab("about")}
+                    >
                         <Ionicons name="briefcase" size={18} color="#65676B" />
                         <Text style={styles.statText}>
                             {userInfo?.workplace || "Add workplace"}
                         </Text>
-                    </View>
+                    </TouchableOpacity>
                 </View>
 
                 <View style={styles.actionsContainer}>
                     <TouchableOpacity
                         style={[styles.actionButton, styles.primaryButton]}
-                        onPress={() =>
-                            Alert.alert(
-                                "Add to Story",
-                                "Create a new story to share with your friends",
-                                [
-                                    { text: "Cancel", style: "cancel" },
-                                    { text: "Create Story" },
-                                ]
-                            )
-                        }
+                        onPress={handleAddStory}
                     >
                         <Ionicons name="add-circle" size={18} color="#fff" />
                         <Text style={styles.primaryButtonText}>
@@ -360,10 +354,21 @@ const ProfileScreen = ({ navigation }) => {
                         style={styles.moreButton}
                         onPress={() =>
                             Alert.alert("More Options", "Choose an action", [
+                                {
+                                    text: "View Activity Log",
+                                    onPress: () => console.log("Activity Log"),
+                                },
+                                {
+                                    text: "Archive",
+                                    onPress: () => console.log("Archive"),
+                                },
+                                {
+                                    text: "Settings",
+                                    onPress: () =>
+                                        navigation.navigate("Settings"),
+                                },
+                                { text: "Log Out", onPress: logout },
                                 { text: "Cancel", style: "cancel" },
-                                { text: "View Activity Log" },
-                                { text: "Archive" },
-                                { text: "Settings" },
                             ])
                         }
                     >
@@ -453,11 +458,22 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.aboutContainer}>
             <View style={styles.aboutSection}>
                 <Text style={styles.aboutSectionTitle}>About</Text>
-                <TouchableOpacity style={styles.editSectionButton}>
+                <TouchableOpacity
+                    style={styles.editSectionButton}
+                    onPress={() => navigation.navigate("EditProfile")}
+                >
                     <Ionicons name="pencil" size={16} color="#1877F2" />
                 </TouchableOpacity>
             </View>
-            <View style={styles.aboutItem}>
+            <TouchableOpacity
+                style={styles.aboutItem}
+                onPress={() =>
+                    Alert.alert(
+                        "Edit Workplace",
+                        "Add or change your workplace information"
+                    )
+                }
+            >
                 <Ionicons
                     name="briefcase"
                     size={22}
@@ -467,8 +483,16 @@ const ProfileScreen = ({ navigation }) => {
                 <Text style={styles.aboutText}>
                     Works at {userInfo?.workplace || "Add workplace"}
                 </Text>
-            </View>
-            <View style={styles.aboutItem}>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.aboutItem}
+                onPress={() =>
+                    Alert.alert(
+                        "Edit Education",
+                        "Add or change your education information"
+                    )
+                }
+            >
                 <Ionicons
                     name="school"
                     size={22}
@@ -478,8 +502,16 @@ const ProfileScreen = ({ navigation }) => {
                 <Text style={styles.aboutText}>
                     Studied at {userInfo?.education || "Add education"}
                 </Text>
-            </View>
-            <View style={styles.aboutItem}>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.aboutItem}
+                onPress={() =>
+                    Alert.alert(
+                        "Edit Location",
+                        "Add or change your current city"
+                    )
+                }
+            >
                 <Ionicons
                     name="home"
                     size={22}
@@ -489,8 +521,16 @@ const ProfileScreen = ({ navigation }) => {
                 <Text style={styles.aboutText}>
                     Lives in {userInfo?.location || "Add current city"}
                 </Text>
-            </View>
-            <View style={styles.aboutItem}>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.aboutItem}
+                onPress={() =>
+                    Alert.alert(
+                        "Edit Relationship Status",
+                        "Add or change your relationship status"
+                    )
+                }
+            >
                 <Ionicons
                     name="heart"
                     size={22}
@@ -500,7 +540,7 @@ const ProfileScreen = ({ navigation }) => {
                 <Text style={styles.aboutText}>
                     {userInfo?.relationship || "Add relationship status"}
                 </Text>
-            </View>
+            </TouchableOpacity>
         </View>
     );
 
@@ -508,7 +548,9 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.friendsContainer}>
             <View style={styles.friendsHeader}>
                 <Text style={styles.friendsTitle}>Friends</Text>
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("Friends")}
+                >
                     <Text style={styles.findFriendsText}>Find Friends</Text>
                 </TouchableOpacity>
             </View>
@@ -518,6 +560,12 @@ const ProfileScreen = ({ navigation }) => {
             <View style={styles.emptyFriends}>
                 <Ionicons name="people" size={50} color="#CCD0D5" />
                 <Text style={styles.emptyFriendsText}>No friends to show</Text>
+                <TouchableOpacity
+                    style={styles.addFriendsButton}
+                    onPress={() => navigation.navigate("Friends")}
+                >
+                    <Text style={styles.addFriendsText}>Find Friends</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -526,13 +574,31 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.photosContainer}>
             <View style={styles.photosHeader}>
                 <Text style={styles.photosTitle}>Photos</Text>
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() =>
+                        Alert.alert(
+                            "All Photos",
+                            "View all your photos and albums"
+                        )
+                    }
+                >
                     <Text style={styles.viewAllPhotosText}>See All Photos</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.emptyPhotos}>
                 <Ionicons name="images" size={50} color="#CCD0D5" />
                 <Text style={styles.emptyPhotosText}>No photos to show</Text>
+                <TouchableOpacity
+                    style={styles.addPhotosButton}
+                    onPress={() =>
+                        Alert.alert(
+                            "Add Photos",
+                            "Upload photos to your profile"
+                        )
+                    }
+                >
+                    <Text style={styles.addPhotosText}>Add Photos</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -577,7 +643,7 @@ const ProfileScreen = ({ navigation }) => {
                                 </Text>
                                 <TouchableOpacity
                                     style={styles.createPostButton}
-                                    onPress={() => navigation.navigate("Home")}
+                                    onPress={handleCreatePost}
                                 >
                                     <Text style={styles.createPostText}>
                                         Create Post
@@ -843,6 +909,17 @@ const styles = StyleSheet.create({
         color: "#65676B",
         marginTop: 10,
     },
+    addFriendsButton: {
+        backgroundColor: "#1877F2",
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 6,
+        marginTop: 15,
+    },
+    addFriendsText: {
+        color: "#fff",
+        fontWeight: "500",
+    },
     photosContainer: {
         backgroundColor: "#fff",
         padding: 15,
@@ -871,6 +948,17 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#65676B",
         marginTop: 10,
+    },
+    addPhotosButton: {
+        backgroundColor: "#1877F2",
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 6,
+        marginTop: 15,
+    },
+    addPhotosText: {
+        color: "#fff",
+        fontWeight: "500",
     },
 });
 
