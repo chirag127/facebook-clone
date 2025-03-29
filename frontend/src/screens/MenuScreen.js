@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
     View,
     Text,
@@ -7,145 +7,248 @@ import {
     TouchableOpacity,
     Image,
     Alert,
+    Switch,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
 import { DEFAULT_PROFILE_IMAGE } from "../utils/constants";
 
 const MenuScreen = ({ navigation }) => {
-    const { userInfo, logout } = useContext(AuthContext);
+    const { userInfo } = useContext(AuthContext);
+    const [darkMode, setDarkMode] = useState(false);
 
-    // Handle menu item functionality
-    const handleMenuAction = (id) => {
-        switch (id) {
-            case "profile":
-                navigation.navigate("Profile");
-                break;
-            case "friends":
-                navigation.navigate("Friends");
-                break;
-            case "saved":
-                navigation.navigate("Saved");
-                break;
-            case "groups":
-                navigation.navigate("Groups");
-                break;
-            case "marketplace":
-                navigation.navigate("Marketplace");
-                break;
-            case "memories":
-                navigation.navigate("Memories");
-                break;
-            case "pages":
-                navigation.navigate("Pages");
-                break;
-            case "events":
-                navigation.navigate("Events");
-                break;
-            case "settings":
-                navigation.navigate("Settings");
-                break;
-            case "help":
-                navigation.navigate("Help");
-                break;
-            case "logout":
-                logout();
-                break;
-            default:
-                break;
-        }
-    };
-
-    // Check if a screen exists in the navigation
-    const handleNavigation = (screen) => {
-        try {
-            navigation.navigate(screen);
-        } catch (error) {
-            Alert.alert(
-                "Feature Coming Soon",
-                `The ${screen} feature is currently under development`,
-                [{ text: "OK" }]
-            );
-        }
-    };
-
-    const menuItems = [
+    const menuCategories = [
         {
-            id: "profile",
-            title: "Profile",
-            icon: "person",
-            color: "#1877F2",
-            onPress: () => handleMenuAction("profile"),
+            title: "Shortcuts",
+            items: [
+                {
+                    id: "memories",
+                    title: "Memories",
+                    icon: "time-outline",
+                    color: "#1877F2",
+                    onPress: () => navigation.navigate("Memories"),
+                },
+                {
+                    id: "saved",
+                    title: "Saved",
+                    icon: "bookmark-outline",
+                    color: "#C837AB",
+                    onPress: () => navigation.navigate("Saved"),
+                },
+                {
+                    id: "groups",
+                    title: "Groups",
+                    icon: "people-outline",
+                    color: "#0BC6DF",
+                    onPress: () => navigation.navigate("Groups"),
+                },
+                {
+                    id: "marketplace",
+                    title: "Marketplace",
+                    icon: "storefront-outline",
+                    color: "#F5533D",
+                    onPress: () => navigation.navigate("Marketplace"),
+                },
+                {
+                    id: "friends",
+                    title: "Friends",
+                    icon: "person-add-outline",
+                    color: "#1877F2",
+                    onPress: () => navigation.navigate("Friends"),
+                },
+                {
+                    id: "feeds",
+                    title: "Feeds",
+                    icon: "newspaper-outline",
+                    color: "#1877F2",
+                    onPress: () => {
+                        Alert.alert(
+                            "Feeds",
+                            "Choose what you want to see in your Feed",
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                {
+                                    text: "Most Recent",
+                                    onPress: () => {
+                                        Alert.alert("Feed Preference", "Your feed will show most recent posts first");
+                                        navigation.navigate("Home");
+                                    }
+                                },
+                                {
+                                    text: "Favorites",
+                                    onPress: () => {
+                                        Alert.alert("Feed Preference", "Your feed will show posts from favorites first");
+                                        navigation.navigate("Home");
+                                    }
+                                }
+                            ]
+                        );
+                    },
+                },
+                {
+                    id: "pages",
+                    title: "Pages",
+                    icon: "flag-outline",
+                    color: "#F79D3B",
+                    onPress: () => navigation.navigate("Pages"),
+                },
+                {
+                    id: "events",
+                    title: "Events",
+                    icon: "calendar-outline",
+                    color: "#F02849",
+                    onPress: () => navigation.navigate("Events"),
+                },
+            ],
         },
         {
-            id: "friends",
-            title: "Friends",
-            icon: "people",
-            color: "#1877F2",
-            onPress: () => handleMenuAction("friends"),
-        },
-        {
-            id: "saved",
-            title: "Saved",
-            icon: "bookmark",
-            color: "#8E24AA",
-            onPress: () => handleMenuAction("saved"),
-        },
-        {
-            id: "groups",
-            title: "Groups",
-            icon: "people-circle",
-            color: "#1565C0",
-            onPress: () => handleMenuAction("groups"),
-        },
-        {
-            id: "marketplace",
-            title: "Marketplace",
-            icon: "storefront",
-            color: "#4CAF50",
-            onPress: () => handleMenuAction("marketplace"),
-        },
-        {
-            id: "memories",
-            title: "Memories",
-            icon: "time",
-            color: "#FB8C00",
-            onPress: () => handleMenuAction("memories"),
-        },
-        {
-            id: "pages",
-            title: "Pages",
-            icon: "flag",
-            color: "#F44336",
-            onPress: () => handleMenuAction("pages"),
-        },
-        {
-            id: "events",
-            title: "Events",
-            icon: "calendar",
-            color: "#E91E63",
-            onPress: () => handleMenuAction("events"),
-        },
-        {
-            id: "settings",
             title: "Settings & Privacy",
-            icon: "settings",
-            color: "#616161",
-            onPress: () => handleMenuAction("settings"),
+            items: [
+                {
+                    id: "settings",
+                    title: "Settings",
+                    icon: "settings-outline",
+                    color: "#65676B",
+                    onPress: () => navigation.navigate("Settings"),
+                },
+                {
+                    id: "dark_mode",
+                    title: "Dark Mode",
+                    icon: "moon-outline",
+                    color: "#65676B",
+                    toggle: true,
+                    value: darkMode,
+                    onToggle: () => {
+                        setDarkMode(!darkMode);
+                        Alert.alert(
+                            "Dark Mode",
+                            darkMode ? "Dark mode disabled" : "Dark mode enabled",
+                            [{ text: "OK" }]
+                        );
+                    },
+                },
+                {
+                    id: "activity_log",
+                    title: "Activity Log",
+                    icon: "list-outline",
+                    color: "#65676B",
+                    onPress: () => {
+                        Alert.alert(
+                            "Activity Log",
+                            "See your activity on Facebook, including posts you've shared, liked, and commented on.",
+                            [{ text: "View Activity", onPress: () => console.log("View activity") }, { text: "Cancel", style: "cancel" }]
+                        );
+                    },
+                },
+                {
+                    id: "language",
+                    title: "Language",
+                    icon: "globe-outline",
+                    color: "#65676B",
+                    value: "English (US)",
+                    onPress: () => {
+                        Alert.alert(
+                            "Language",
+                            "Choose your language",
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                { text: "English (US)", onPress: () => console.log("Selected English") },
+                                { text: "Español", onPress: () => console.log("Selected Spanish") },
+                                { text: "Français", onPress: () => console.log("Selected French") },
+                                { text: "More...", onPress: () => console.log("View more languages") }
+                            ]
+                        );
+                    },
+                },
+            ],
         },
         {
-            id: "help",
             title: "Help & Support",
-            icon: "help-circle",
-            color: "#616161",
-            onPress: () => handleMenuAction("help"),
-        },
-        {
-            id: "logout",
-            title: "Log Out",
-            icon: "log-out",
-            color: "#616161",
-            onPress: () => handleMenuAction("logout"),
+            items: [
+                {
+                    id: "help",
+                    title: "Help Center",
+                    icon: "help-circle-outline",
+                    color: "#65676B",
+                    onPress: () => navigation.navigate("Help"),
+                },
+                {
+                    id: "report",
+                    title: "Report a Problem",
+                    icon: "warning-outline",
+                    color: "#65676B",
+                    onPress: () => {
+                        Alert.alert(
+                            "Report a Problem",
+                            "What problem are you experiencing?",
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                {
+                                    text: "Something Isn't Working",
+                                    onPress: () => {
+                                        Alert.alert(
+                                            "Report Submitted",
+                                            "Thanks for your feedback. We'll look into this issue."
+                                        );
+                                    }
+                                },
+                                {
+                                    text: "Abusive Content",
+                                    onPress: () => {
+                                        Alert.alert(
+                                            "Report Submitted",
+                                            "Thanks for letting us know about this content. We'll review it soon."
+                                        );
+                                    }
+                                },
+                                {
+                                    text: "Account Hacked",
+                                    onPress: () => {
+                                        Alert.alert(
+                                            "Secure Your Account",
+                                            "We'll help you secure your account and report any unauthorized activity."
+                                        );
+                                    }
+                                },
+                            ]
+                        );
+                    },
+                },
+                {
+                    id: "privacy",
+                    title: "Privacy Checkup",
+                    icon: "shield-checkmark-outline",
+                    color: "#65676B",
+                    onPress: () => {
+                        Alert.alert(
+                            "Privacy Checkup",
+                            "Review and strengthen your privacy settings",
+                            [
+                                { text: "Start Checkup", onPress: () => console.log("Privacy checkup started") },
+                                { text: "Later", style: "cancel" }
+                            ]
+                        );
+                    },
+                },
+                {
+                    id: "terms",
+                    title: "Terms & Policies",
+                    icon: "document-text-outline",
+                    color: "#65676B",
+                    onPress: () => {
+                        Alert.alert(
+                            "Terms and Policies",
+                            "View our terms of service and privacy policies",
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                { text: "Terms of Service", onPress: () => console.log("View terms") },
+                                { text: "Privacy Policy", onPress: () => console.log("View privacy") },
+                                { text: "Community Standards", onPress: () => console.log("View standards") }
+                            ]
+                        );
+                    },
+                },
+            ],
         },
     ];
 
@@ -154,107 +257,106 @@ const MenuScreen = ({ navigation }) => {
             key={item.id}
             style={styles.menuItem}
             onPress={item.onPress}
+            disabled={item.toggle}
         >
-            <View
-                style={[styles.iconContainer, { backgroundColor: item.color }]}
-            >
-                <Ionicons name={item.icon} size={22} color="#fff" />
+            <View style={styles.menuItemLeft}>
+                <View
+                    style={[
+                        styles.iconContainer,
+                        { backgroundColor: item.color + "20" }, // Adding 20% opacity
+                    ]}
+                >
+                    <Ionicons name={item.icon} size={24} color={item.color} />
+                </View>
+                <Text style={styles.menuItemText}>{item.title}</Text>
             </View>
-            <Text style={styles.menuItemText}>{item.title}</Text>
-            <View style={styles.arrowContainer}>
+
+            {item.toggle ? (
+                <Switch
+                    trackColor={{ false: "#CCD0D5", true: "#1877F2" }}
+                    thumbColor="#FFFFFF"
+                    onValueChange={item.onToggle}
+                    value={item.value}
+                />
+            ) : item.value ? (
+                <View style={styles.menuItemRight}>
+                    <Text style={styles.menuItemValue}>{item.value}</Text>
+                    <Ionicons name="chevron-forward" size={20} color="#65676B" />
+                </View>
+            ) : (
                 <Ionicons name="chevron-forward" size={20} color="#65676B" />
-            </View>
+            )}
         </TouchableOpacity>
     );
-
-    // Group menu items into sections
-    const topMenuItems = menuItems.slice(0, 8);
-    const bottomMenuItems = menuItems.slice(8);
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>Menu</Text>
+                <Text style={styles.headerTitle}>Menu</Text>
                 <TouchableOpacity
-                    style={styles.searchButton}
-                    onPress={() => Alert.alert("Search", "Search Facebook")}
+                    style={styles.headerButton}
+                    onPress={() => {
+                        Alert.alert(
+                            "Search",
+                            "What would you like to search for?",
+                            [{ text: "Cancel", style: "cancel" }]
+                        );
+                    }}
                 >
-                    <Ionicons name="search" size={22} color="#000" />
+                    <Ionicons name="search" size={24} color="#1877F2" />
                 </TouchableOpacity>
             </View>
 
-            <ScrollView>
+            <ScrollView style={styles.scrollContainer}>
                 <TouchableOpacity
-                    style={styles.profileCard}
+                    style={styles.profileSection}
                     onPress={() => navigation.navigate("Profile")}
                 >
                     <Image
                         source={{
-                            uri:
-                                userInfo?.profilePicture ||
-                                DEFAULT_PROFILE_IMAGE,
+                            uri: userInfo?.profilePicture || DEFAULT_PROFILE_IMAGE,
                         }}
-                        style={styles.profilePic}
+                        style={styles.profileImage}
                     />
                     <View style={styles.profileInfo}>
-                        <Text style={styles.profileName}>{userInfo?.name}</Text>
-                        <Text style={styles.viewProfile}>
-                            View your profile
+                        <Text style={styles.profileName}>
+                            {userInfo?.name || "User Name"}
                         </Text>
+                        <Text style={styles.viewProfile}>View your profile</Text>
                     </View>
+                    <Ionicons name="chevron-forward" size={20} color="#65676B" />
                 </TouchableOpacity>
 
-                <View style={styles.divider} />
-
-                <View style={styles.menuSection}>
-                    <Text style={styles.menuSectionTitle}>All Shortcuts</Text>
-                    <View style={styles.menuList}>
-                        {topMenuItems.map(renderMenuItem)}
+                {menuCategories.map((category) => (
+                    <View key={category.title} style={styles.menuCategory}>
+                        <Text style={styles.categoryTitle}>{category.title}</Text>
+                        <View style={styles.categoryItems}>
+                            {category.items.map(renderMenuItem)}
+                        </View>
                     </View>
-                </View>
+                ))}
 
-                <View style={styles.divider} />
-
-                <View style={styles.menuSection}>
-                    <Text style={styles.menuSectionTitle}>Settings & More</Text>
-                    <View style={styles.menuList}>
-                        {bottomMenuItems.map(renderMenuItem)}
-                    </View>
-                </View>
-
-                <View style={styles.footer}>
-                    <Text style={styles.footerText}>Facebook © 2023</Text>
-                    <TouchableOpacity
-                        onPress={() =>
-                            Alert.alert(
-                                "About",
-                                "Facebook helps you connect and share with the people in your life."
-                            )
-                        }
-                    >
-                        <Text style={styles.footerLink}>About</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() =>
-                            Alert.alert(
-                                "Terms",
-                                "By using our service, you agree to our Terms of Service."
-                            )
-                        }
-                    >
-                        <Text style={styles.footerLink}>Terms</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() =>
-                            Alert.alert(
-                                "Privacy",
-                                "Your privacy is important to us. Learn how we use your data."
-                            )
-                        }
-                    >
-                        <Text style={styles.footerLink}>Privacy</Text>
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity
+                    style={styles.logoutButton}
+                    onPress={() => {
+                        Alert.alert(
+                            "Log Out",
+                            "Are you sure you want to log out?",
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                {
+                                    text: "Log Out",
+                                    style: "destructive",
+                                    onPress: () => {
+                                        navigation.navigate("Login");
+                                    }
+                                }
+                            ]
+                        );
+                    }}
+                >
+                    <Text style={styles.logoutText}>Log Out</Text>
+                </TouchableOpacity>
             </ScrollView>
         </View>
     );
@@ -270,21 +372,15 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         padding: 15,
-        backgroundColor: "#fff",
+        backgroundColor: "#FFFFFF",
         borderBottomWidth: 1,
         borderBottomColor: "#E4E6EB",
-        elevation: 2,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 1,
     },
-    title: {
-        fontSize: 22,
+    headerTitle: {
+        fontSize: 20,
         fontWeight: "bold",
-        color: "#1877F2",
     },
-    searchButton: {
+    headerButton: {
         width: 40,
         height: 40,
         borderRadius: 20,
@@ -292,62 +388,63 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    profileCard: {
+    scrollContainer: {
+        flex: 1,
+    },
+    profileSection: {
         flexDirection: "row",
         alignItems: "center",
+        backgroundColor: "#FFFFFF",
         padding: 15,
-        backgroundColor: "#fff",
-        borderBottomWidth: 1,
-        borderBottomColor: "#E4E6EB",
+        marginTop: 10,
+        marginHorizontal: 10,
+        borderRadius: 8,
     },
-    profilePic: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        borderWidth: 2,
-        borderColor: "#1877F2",
+    profileImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
     },
     profileInfo: {
+        flex: 1,
         marginLeft: 15,
     },
     profileName: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "bold",
-        color: "#050505",
     },
     viewProfile: {
+        fontSize: 14,
         color: "#65676B",
-        marginTop: 3,
+        marginTop: 2,
     },
-    divider: {
-        height: 10,
-        backgroundColor: "#F0F2F5",
+    menuCategory: {
+        marginTop: 20,
     },
-    menuSection: {
-        backgroundColor: "#fff",
-        paddingTop: 12,
-        marginBottom: 10,
-        borderTopWidth: 1,
-        borderBottomWidth: 1,
-        borderColor: "#E4E6EB",
-    },
-    menuSectionTitle: {
+    categoryTitle: {
         fontSize: 16,
         fontWeight: "600",
+        marginLeft: 15,
+        marginBottom: 10,
         color: "#65676B",
-        paddingHorizontal: 15,
-        paddingBottom: 8,
     },
-    menuList: {
-        backgroundColor: "#fff",
+    categoryItems: {
+        backgroundColor: "#FFFFFF",
+        marginHorizontal: 10,
+        borderRadius: 8,
+        overflow: "hidden",
     },
     menuItem: {
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: 14,
-        paddingHorizontal: 15,
-        borderBottomWidth: 0.5,
-        borderBottomColor: "#E4E6EB",
+        justifyContent: "space-between",
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: "#F0F2F5",
+    },
+    menuItemLeft: {
+        flexDirection: "row",
+        alignItems: "center",
     },
     iconContainer: {
         width: 36,
@@ -359,29 +456,27 @@ const styles = StyleSheet.create({
     },
     menuItemText: {
         fontSize: 16,
-        flex: 1,
-        color: "#050505",
     },
-    arrowContainer: {
-        marginLeft: "auto",
-    },
-    footer: {
-        padding: 20,
+    menuItemRight: {
+        flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#fff",
-        marginTop: 10,
-        borderTopWidth: 1,
-        borderTopColor: "#E4E6EB",
     },
-    footerText: {
+    menuItemValue: {
+        fontSize: 14,
         color: "#65676B",
-        fontSize: 12,
-        marginBottom: 10,
+        marginRight: 5,
     },
-    footerLink: {
-        color: "#1877F2",
-        fontSize: 12,
-        marginBottom: 5,
+    logoutButton: {
+        backgroundColor: "#E4E6EB",
+        margin: 20,
+        padding: 12,
+        borderRadius: 8,
+        alignItems: "center",
+    },
+    logoutText: {
+        fontSize: 16,
+        fontWeight: "medium",
+        color: "#1C1E21",
     },
 });
 

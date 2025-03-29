@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -6,12 +6,14 @@ import {
     FlatList,
     TouchableOpacity,
     Image,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { generateShareableUrl, shareContent } from "../utils/linkingUtils";
 
 const MemoriesScreen = ({ navigation }) => {
     // Placeholder data for memories
-    const memories = [
+    const [memories, setMemories] = useState([
         {
             id: "1",
             title: "3 Years Ago",
@@ -19,6 +21,7 @@ const MemoriesScreen = ({ navigation }) => {
             image: "https://via.placeholder.com/400x300",
             likes: 24,
             comments: 5,
+            isLiked: false,
         },
         {
             id: "2",
@@ -27,6 +30,7 @@ const MemoriesScreen = ({ navigation }) => {
             image: "https://via.placeholder.com/400x300",
             likes: 42,
             comments: 8,
+            isLiked: true,
         },
         {
             id: "3",
@@ -35,8 +39,196 @@ const MemoriesScreen = ({ navigation }) => {
             image: "https://via.placeholder.com/400x300",
             likes: 18,
             comments: 3,
+            isLiked: false,
         },
-    ];
+    ]);
+
+    const handleLikeMemory = (id) => {
+        setMemories(
+            memories.map((memory) => {
+                if (memory.id === id) {
+                    const wasLiked = memory.isLiked;
+                    return {
+                        ...memory,
+                        isLiked: !wasLiked,
+                        likes: wasLiked ? memory.likes - 1 : memory.likes + 1,
+                    };
+                }
+                return memory;
+            })
+        );
+    };
+
+    const handleCommentMemory = (memory) => {
+        Alert.alert(
+            "Comment",
+            `Add a comment to this memory from ${memory.date}`,
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Comment",
+                    onPress: () => {
+                        // In a real app, would open a comment input form
+                        Alert.alert(
+                            "Comment Added",
+                            "Your comment has been added"
+                        );
+                        // Update comment count in state
+                        setMemories(
+                            memories.map((item) => {
+                                if (item.id === memory.id) {
+                                    return {
+                                        ...item,
+                                        comments: item.comments + 1,
+                                    };
+                                }
+                                return item;
+                            })
+                        );
+                    },
+                },
+            ]
+        );
+    };
+
+    const handleShareMemory = (memory) => {
+        const shareableUrl = generateShareableUrl("memories", {
+            memoryId: memory.id,
+        });
+
+        Alert.alert(
+            "Share Memory",
+            "Choose how you'd like to share this memory",
+            [
+                {
+                    text: "Share to News Feed",
+                    onPress: () => {
+                        Alert.alert(
+                            "Share to News Feed",
+                            "Memory has been shared to your news feed"
+                        );
+                    },
+                },
+                {
+                    text: "Share to Your Story",
+                    onPress: () => {
+                        Alert.alert(
+                            "Share to Story",
+                            "Memory has been shared to your story"
+                        );
+                    },
+                },
+                {
+                    text: "Send in Messenger",
+                    onPress: () => {
+                        Alert.alert(
+                            "Send in Messenger",
+                            "Choose a friend to share with"
+                        );
+                    },
+                },
+                {
+                    text: "Share via...",
+                    onPress: () => {
+                        shareContent({
+                            title: `${memory.title} - Memory from Facebook`,
+                            message: `Check out this memory from ${memory.date}!`,
+                            url: shareableUrl,
+                        });
+                    },
+                },
+                { text: "Cancel", style: "cancel" },
+            ]
+        );
+    };
+
+    const handleMemoryOptions = (memory) => {
+        Alert.alert(
+            "Memory Options",
+            "What would you like to do with this memory?",
+            [
+                {
+                    text: "View on Timeline",
+                    onPress: () =>
+                        Alert.alert(
+                            "Timeline",
+                            `Viewing memory from ${memory.date} on your timeline`
+                        ),
+                },
+                {
+                    text: "Hide from Timeline",
+                    onPress: () =>
+                        Alert.alert(
+                            "Hidden",
+                            `Memory from ${memory.date} has been hidden`
+                        ),
+                },
+                {
+                    text: "Delete Memory",
+                    style: "destructive",
+                    onPress: () => {
+                        Alert.alert(
+                            "Delete Memory",
+                            "Are you sure you want to delete this memory?",
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                {
+                                    text: "Delete",
+                                    style: "destructive",
+                                    onPress: () => {
+                                        setMemories(
+                                            memories.filter(
+                                                (item) => item.id !== memory.id
+                                            )
+                                        );
+                                        Alert.alert(
+                                            "Deleted",
+                                            "Memory has been deleted"
+                                        );
+                                    },
+                                },
+                            ]
+                        );
+                    },
+                },
+                { text: "Cancel", style: "cancel" },
+            ]
+        );
+    };
+
+    const handleSettingsPress = () => {
+        Alert.alert(
+            "Memories Settings",
+            "Configure your memories preferences",
+            [
+                {
+                    text: "Memories Notifications",
+                    onPress: () =>
+                        Alert.alert(
+                            "Notifications",
+                            "Configure when and how you're notified about memories"
+                        ),
+                },
+                {
+                    text: "Hide Memories",
+                    onPress: () =>
+                        Alert.alert(
+                            "Hide Memories",
+                            "Choose dates or people to hide from Memories"
+                        ),
+                },
+                {
+                    text: "Preferences",
+                    onPress: () =>
+                        Alert.alert(
+                            "Preferences",
+                            "Choose your memories display preferences"
+                        ),
+                },
+                { text: "Cancel", style: "cancel" },
+            ]
+        );
+    };
 
     const renderItem = ({ item }) => (
         <View style={styles.memoryCard}>
@@ -45,7 +237,7 @@ const MemoriesScreen = ({ navigation }) => {
                     <Text style={styles.memoryTitle}>{item.title}</Text>
                     <Text style={styles.memoryDate}>{item.date}</Text>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => handleMemoryOptions(item)}>
                     <Ionicons
                         name="ellipsis-horizontal"
                         size={20}
@@ -53,32 +245,71 @@ const MemoriesScreen = ({ navigation }) => {
                     />
                 </TouchableOpacity>
             </View>
-            <Image source={{ uri: item.image }} style={styles.memoryImage} />
+            <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={() =>
+                    Alert.alert("Memory", `Viewing memory from ${item.date}`)
+                }
+            >
+                <Image
+                    source={{ uri: item.image }}
+                    style={styles.memoryImage}
+                />
+            </TouchableOpacity>
             <View style={styles.memoryFooter}>
                 <View style={styles.memoryStats}>
-                    <View style={styles.statItem}>
+                    <TouchableOpacity
+                        style={styles.statItem}
+                        onPress={() =>
+                            Alert.alert(
+                                "Likes",
+                                `${item.likes} people liked this memory`
+                            )
+                        }
+                    >
                         <Ionicons name="heart" size={16} color="#E41E3F" />
                         <Text style={styles.statText}>{item.likes}</Text>
-                    </View>
-                    <View style={styles.statItem}>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.statItem}
+                        onPress={() =>
+                            Alert.alert(
+                                "Comments",
+                                `${item.comments} comments on this memory`
+                            )
+                        }
+                    >
                         <Ionicons
                             name="chatbubble-outline"
                             size={16}
                             color="#65676B"
                         />
                         <Text style={styles.statText}>{item.comments}</Text>
-                    </View>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.memoryActions}>
-                    <TouchableOpacity style={styles.actionButton}>
+                    <TouchableOpacity
+                        style={styles.actionButton}
+                        onPress={() => handleLikeMemory(item.id)}
+                    >
                         <Ionicons
-                            name="heart-outline"
+                            name={item.isLiked ? "heart" : "heart-outline"}
                             size={22}
-                            color="#65676B"
+                            color={item.isLiked ? "#E41E3F" : "#65676B"}
                         />
-                        <Text style={styles.actionText}>Like</Text>
+                        <Text
+                            style={[
+                                styles.actionText,
+                                item.isLiked && styles.activeActionText,
+                            ]}
+                        >
+                            Like
+                        </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.actionButton}>
+                    <TouchableOpacity
+                        style={styles.actionButton}
+                        onPress={() => handleCommentMemory(item)}
+                    >
                         <Ionicons
                             name="chatbubble-outline"
                             size={22}
@@ -86,7 +317,10 @@ const MemoriesScreen = ({ navigation }) => {
                         />
                         <Text style={styles.actionText}>Comment</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.actionButton}>
+                    <TouchableOpacity
+                        style={styles.actionButton}
+                        onPress={() => handleShareMemory(item)}
+                    >
                         <Ionicons
                             name="share-outline"
                             size={22}
@@ -106,7 +340,7 @@ const MemoriesScreen = ({ navigation }) => {
                     <Ionicons name="arrow-back" size={24} color="#1877F2" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Memories</Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleSettingsPress}>
                     <Ionicons
                         name="settings-outline"
                         size={24}
@@ -248,10 +482,10 @@ const styles = StyleSheet.create({
         paddingTop: 10,
     },
     actionButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
         flex: 1,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
         paddingVertical: 8,
     },
     actionText: {
@@ -259,18 +493,21 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#65676B",
     },
+    activeActionText: {
+        color: "#E41E3F",
+    },
     emptyContainer: {
         alignItems: "center",
         justifyContent: "center",
-        padding: 50,
+        padding: 30,
     },
     emptyIcon: {
-        marginBottom: 20,
+        marginBottom: 15,
     },
     emptyText: {
         fontSize: 18,
         fontWeight: "bold",
-        marginBottom: 8,
+        marginBottom: 5,
     },
     emptySubtext: {
         fontSize: 14,

@@ -10,6 +10,7 @@ import {
     ActivityIndicator,
     KeyboardAvoidingView,
     Platform,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
@@ -21,6 +22,7 @@ import {
     unlikePost,
 } from "../api/api";
 import CommentItem from "../components/CommentItem";
+import { generateShareableUrl, shareContent } from "../utils/linkingUtils";
 
 const PostDetailScreen = ({ route, navigation }) => {
     const { postId } = route.params;
@@ -86,6 +88,92 @@ const PostDetailScreen = ({ route, navigation }) => {
         }
     };
 
+    const handleSharePress = () => {
+        const shareableUrl = generateShareableUrl("post", { postId: post._id });
+
+        Alert.alert("Share Post", "Choose how you'd like to share this post", [
+            {
+                text: "Share to News Feed",
+                onPress: () => {
+                    Alert.alert(
+                        "Share to News Feed",
+                        "Post has been shared to your news feed"
+                    );
+                },
+            },
+            {
+                text: "Share to Your Story",
+                onPress: () => {
+                    Alert.alert(
+                        "Share to Story",
+                        "Post has been shared to your story"
+                    );
+                },
+            },
+            {
+                text: "Send in Messenger",
+                onPress: () => {
+                    Alert.alert(
+                        "Send in Messenger",
+                        "Choose a friend to share with"
+                    );
+                },
+            },
+            {
+                text: "Share via...",
+                onPress: () => {
+                    shareContent({
+                        title: `${post.user.name}'s Post`,
+                        message: post.text || "Check out this post!",
+                        url: shareableUrl,
+                    });
+                },
+            },
+            {
+                text: "Copy Link",
+                onPress: async () => {
+                    try {
+                        const { setStringAsync } = require("expo-clipboard");
+                        await setStringAsync(shareableUrl);
+                        Alert.alert("Success", "Link copied to clipboard");
+                    } catch (error) {
+                        console.error("Failed to copy link", error);
+                        Alert.alert("Error", "Failed to copy link");
+                    }
+                },
+            },
+            { text: "Cancel", style: "cancel" },
+        ]);
+    };
+
+    const handleMorePress = () => {
+        Alert.alert("Post Options", "Choose an action for this post", [
+            {
+                text: "Save Post",
+                onPress: () => Alert.alert("Saved", "Post has been saved"),
+            },
+            {
+                text: "Hide Post",
+                onPress: () =>
+                    Alert.alert(
+                        "Hidden",
+                        "Post has been hidden from your feed"
+                    ),
+            },
+            {
+                text: "Report Post",
+                onPress: () =>
+                    Alert.alert("Report", "Post has been reported for review"),
+            },
+            { text: "Cancel", style: "cancel" },
+        ]);
+    };
+
+    const focusCommentInput = () => {
+        // In a real implementation, we would focus the input
+        Alert.alert("Comment", "Add a comment to this post");
+    };
+
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
@@ -133,7 +221,10 @@ const PostDetailScreen = ({ route, navigation }) => {
                             </View>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.moreButton}>
+                        <TouchableOpacity
+                            style={styles.moreButton}
+                            onPress={handleMorePress}
+                        >
                             <Ionicons
                                 name="ellipsis-horizontal"
                                 size={20}
@@ -145,15 +236,33 @@ const PostDetailScreen = ({ route, navigation }) => {
                     <Text style={styles.postText}>{post.text}</Text>
 
                     {post.image && (
-                        <Image
-                            source={{ uri: post.image }}
-                            style={styles.postImage}
-                            resizeMode="cover"
-                        />
+                        <TouchableOpacity
+                            activeOpacity={0.9}
+                            onPress={() =>
+                                Alert.alert(
+                                    "Full Image",
+                                    "View full size image"
+                                )
+                            }
+                        >
+                            <Image
+                                source={{ uri: post.image }}
+                                style={styles.postImage}
+                                resizeMode="cover"
+                            />
+                        </TouchableOpacity>
                     )}
 
                     <View style={styles.postStats}>
-                        <View style={styles.likesContainer}>
+                        <TouchableOpacity
+                            style={styles.likesContainer}
+                            onPress={() =>
+                                Alert.alert(
+                                    "Likes",
+                                    `${post.likes.length} people liked this post`
+                                )
+                            }
+                        >
                             <View style={styles.likeIcon}>
                                 <Ionicons
                                     name="thumbs-up"
@@ -164,10 +273,19 @@ const PostDetailScreen = ({ route, navigation }) => {
                             <Text style={styles.statsText}>
                                 {post.likes.length}
                             </Text>
-                        </View>
-                        <Text style={styles.statsText}>
-                            {post.comments.length} comments
-                        </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() =>
+                                Alert.alert(
+                                    "Comments",
+                                    `${post.comments.length} comments on this post`
+                                )
+                            }
+                        >
+                            <Text style={styles.statsText}>
+                                {post.comments.length} comments
+                            </Text>
+                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.actionsContainer}>
@@ -192,7 +310,10 @@ const PostDetailScreen = ({ route, navigation }) => {
                             </Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.actionButton}>
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            onPress={focusCommentInput}
+                        >
                             <Ionicons
                                 name="chatbubble-outline"
                                 size={22}
@@ -201,7 +322,10 @@ const PostDetailScreen = ({ route, navigation }) => {
                             <Text style={styles.actionText}>Comment</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.actionButton}>
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            onPress={handleSharePress}
+                        >
                             <Ionicons
                                 name="share-outline"
                                 size={22}
@@ -249,17 +373,14 @@ const PostDetailScreen = ({ route, navigation }) => {
                     multiline
                 />
                 <TouchableOpacity
-                    style={[
-                        styles.sendButton,
-                        !commentText.trim() && styles.disabledButton,
-                    ]}
+                    style={styles.sendButton}
                     onPress={handleAddComment}
-                    disabled={!commentText.trim() || submitting}
+                    disabled={submitting || !commentText.trim()}
                 >
                     {submitting ? (
-                        <ActivityIndicator size="small" color="#fff" />
+                        <ActivityIndicator size="small" color="#1877F2" />
                     ) : (
-                        <Ionicons name="send" size={20} color="#fff" />
+                        <Ionicons name="send" size={24} color="#1877F2" />
                     )}
                 </TouchableOpacity>
             </View>
@@ -270,19 +391,19 @@ const PostDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F0F2F5",
-    },
-    scrollContainer: {
-        flex: 1,
+        backgroundColor: "#f0f2f5",
     },
     loadingContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
     },
+    scrollContainer: {
+        flex: 1,
+    },
     postContainer: {
         backgroundColor: "#fff",
-        padding: 15,
+        padding: 12,
     },
     postHeader: {
         flexDirection: "row",
@@ -303,6 +424,7 @@ const styles = StyleSheet.create({
     userName: {
         fontWeight: "bold",
         fontSize: 16,
+        color: "#050505",
     },
     postTime: {
         color: "#65676B",
@@ -322,7 +444,7 @@ const styles = StyleSheet.create({
     postImage: {
         width: "100%",
         height: 300,
-        borderRadius: 10,
+        borderRadius: 8,
         marginBottom: 10,
     },
     postStats: {
@@ -347,11 +469,12 @@ const styles = StyleSheet.create({
     },
     statsText: {
         color: "#65676B",
+        fontSize: 13,
     },
     actionsContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingVertical: 10,
+        paddingVertical: 8,
     },
     actionButton: {
         flex: 1,
@@ -363,41 +486,38 @@ const styles = StyleSheet.create({
     actionText: {
         marginLeft: 5,
         color: "#65676B",
-        fontWeight: "500",
+        fontWeight: "bold",
+        fontSize: 13,
     },
     commentsContainer: {
         backgroundColor: "#fff",
         marginTop: 8,
-        padding: 15,
-        paddingBottom: 70,
+        padding: 12,
     },
     commentsHeader: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "bold",
         marginBottom: 15,
     },
     noCommentsText: {
         color: "#65676B",
         textAlign: "center",
-        padding: 20,
+        padding: 15,
     },
     commentInputContainer: {
         flexDirection: "row",
         alignItems: "center",
-        padding: 10,
         backgroundColor: "#fff",
+        paddingHorizontal: 12,
+        paddingVertical: 8,
         borderTopWidth: 1,
         borderTopColor: "#E4E6EB",
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
     },
     commentProfilePic: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        marginRight: 10,
+        width: 35,
+        height: 35,
+        borderRadius: 17.5,
+        marginRight: 8,
     },
     commentInput: {
         flex: 1,
@@ -408,16 +528,11 @@ const styles = StyleSheet.create({
         maxHeight: 100,
     },
     sendButton: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: "#1877F2",
+        marginLeft: 8,
+        width: 35,
+        height: 35,
         justifyContent: "center",
         alignItems: "center",
-        marginLeft: 10,
-    },
-    disabledButton: {
-        backgroundColor: "#BCC0C4",
     },
 });
 

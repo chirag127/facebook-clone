@@ -9,6 +9,8 @@ import {
     ActivityIndicator,
     Alert,
     TextInput,
+    Modal,
+    ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
@@ -26,9 +28,12 @@ const FriendsScreen = ({ navigation }) => {
     const [activeTab, setActiveTab] = useState("friends");
     const [friends, setFriends] = useState([]);
     const [friendRequests, setFriendRequests] = useState([]);
+    const [suggestedFriends, setSuggestedFriends] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchVisible, setSearchVisible] = useState(false);
     const [searchText, setSearchText] = useState("");
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [selectedFriend, setSelectedFriend] = useState(null);
 
     useEffect(() => {
         fetchData();
@@ -37,52 +42,17 @@ const FriendsScreen = ({ navigation }) => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            // Mock data for demonstration - in a real app this would use the API
             if (activeTab === "friends") {
-                // Mock friends
-                const mockFriends = [
-                    {
-                        _id: "1",
-                        name: "John Doe",
-                        profilePicture:
-                            "https://randomuser.me/api/portraits/men/1.jpg",
-                        mutualFriends: 5,
-                    },
-                    {
-                        _id: "2",
-                        name: "Jane Smith",
-                        profilePicture:
-                            "https://randomuser.me/api/portraits/women/2.jpg",
-                        mutualFriends: 3,
-                    },
-                    {
-                        _id: "3",
-                        name: "Robert Johnson",
-                        profilePicture:
-                            "https://randomuser.me/api/portraits/men/3.jpg",
-                        mutualFriends: 8,
-                    },
-                ];
-                setFriends(mockFriends);
-            } else {
-                // Mock friend requests
-                const mockRequests = [
-                    {
-                        _id: "4",
-                        name: "Sarah Williams",
-                        profilePicture:
-                            "https://randomuser.me/api/portraits/women/4.jpg",
-                        mutualFriends: 2,
-                    },
-                    {
-                        _id: "5",
-                        name: "Michael Brown",
-                        profilePicture:
-                            "https://randomuser.me/api/portraits/men/5.jpg",
-                        mutualFriends: 4,
-                    },
-                ];
-                setFriendRequests(mockRequests);
+                const friendsResponse = await getFriends();
+                setFriends(friendsResponse.data.data || []);
+                // TODO: Implement API for suggested friends if available
+                setSuggestedFriends([]); // Clear suggested for now
+            } else if (activeTab === "requests") {
+                const requestsResponse = await getFriendRequests();
+                setFriendRequests(requestsResponse.data.data || []);
+            } else if (activeTab === "suggested") {
+                // TODO: Implement API for suggested friends if available
+                setSuggestedFriends([]); // Clear suggested for now
             }
         } catch (error) {
             console.log(`Error fetching ${activeTab}:`, error);
@@ -93,22 +63,10 @@ const FriendsScreen = ({ navigation }) => {
 
     const handleAcceptRequest = async (userId) => {
         try {
-            // In a real app, this would call the API
-            // await acceptFriendRequest(userId);
-
-            // For demo - simply remove from requests list
-            Alert.alert("Friend Request Accepted", "You are now friends!");
-            setFriendRequests(
-                friendRequests.filter((request) => request._id !== userId)
-            );
-
-            // Add to friends list (simulate API response)
-            const acceptedFriend = friendRequests.find(
-                (request) => request._id === userId
-            );
-            if (acceptedFriend) {
-                setFriends([...friends, acceptedFriend]);
-            }
+            await acceptFriendRequest(userId);
+            Alert.alert("Success", "Friend request accepted!");
+            // Refetch data to update lists
+            fetchData();
         } catch (error) {
             console.log("Error accepting friend request:", error);
         }
@@ -116,16 +74,25 @@ const FriendsScreen = ({ navigation }) => {
 
     const handleRejectRequest = async (userId) => {
         try {
-            // In a real app, this would call the API
-            // await rejectFriendRequest(userId);
-
             Alert.alert(
-                "Friend Request Deleted",
-                "The friend request has been removed"
-            );
-            // Remove from requests list
-            setFriendRequests(
-                friendRequests.filter((request) => request._id !== userId)
+                "Delete Request",
+                "Are you sure you want to delete this friend request?",
+                [
+                    { text: "Cancel", style: "cancel" },
+                    {
+                        text: "Delete",
+                        style: "destructive",
+                        onPress: async () => {
+                            await rejectFriendRequest(userId);
+                            Alert.alert(
+                                "Success",
+                                "Friend request deleted"
+                            );
+                            // Refetch data to update lists
+                            fetchData();
+                        }
+                    }
+                ]
             );
         } catch (error) {
             console.log("Error rejecting friend request:", error);
@@ -142,20 +109,18 @@ const FriendsScreen = ({ navigation }) => {
                     {
                         text: "Remove",
                         style: "destructive",
-                        onPress: () => {
-                            // In a real app, this would call the API
-                            // await removeFriend(userId);
-
-                            // Remove from friends list
-                            setFriends(
-                                friends.filter(
-                                    (friend) => friend._id !== userId
-                                )
-                            );
+                        onPress: async () => {
+                            await removeFriend(userId);
                             Alert.alert(
-                                "Friend Removed",
-                                "This person has been removed from your friends list"
+                                "Success",
+                                "Friend removed successfully"
                             );
+                            // Close modal if open
+                            if (showProfileModal && selectedFriend?._id === userId) {
+                                setShowProfileModal(false);
+                            }
+                            // Refetch data to update lists
+                            fetchData();
                         },
                     },
                 ]
@@ -170,17 +135,51 @@ const FriendsScreen = ({ navigation }) => {
             { text: "Cancel", style: "cancel" },
             {
                 text: "Find Friends",
-                onPress: () => console.log("Finding friends"),
+                onPress: () => {
+                    // Show active tab for suggested friends
+                    setActiveTab("suggested");
+                },
             },
         ]);
     };
 
+    const handleSendFriendRequest = (userId) => {
+        // Find the suggested friend
+        const friend = suggestedFriends.find(f => f._id === userId);
+        if (friend) {
+            Alert.alert(
+                "Friend Request Sent",
+                `Your friend request to ${friend.name} has been sent!`
+            );
+            // Remove from suggestions
+            setSuggestedFriends(suggestedFriends.filter(f => f._id !== userId));
+        }
+    };
+
+    const handleViewFriendProfile = (friend) => {
+        setSelectedFriend(friend);
+        setShowProfileModal(true);
+    };
+
+    const filteredFriends = searchText
+        ? friends.filter(friend =>
+            friend.name.toLowerCase().includes(searchText.toLowerCase()))
+        : friends;
+
+    const filteredRequests = searchText
+        ? friendRequests.filter(request =>
+            request.name.toLowerCase().includes(searchText.toLowerCase()))
+        : friendRequests;
+
+    const filteredSuggestions = searchText
+        ? suggestedFriends.filter(suggestion =>
+            suggestion.name.toLowerCase().includes(searchText.toLowerCase()))
+        : suggestedFriends;
+
     const renderFriendItem = ({ item }) => (
         <TouchableOpacity
             style={styles.friendItem}
-            onPress={() =>
-                navigation.navigate("UserProfile", { userId: item._id })
-            }
+            onPress={() => handleViewFriendProfile(item)}
         >
             <Image
                 source={{
@@ -197,9 +196,19 @@ const FriendsScreen = ({ navigation }) => {
             <View style={styles.friendActions}>
                 <TouchableOpacity
                     style={styles.messageButton}
-                    onPress={() =>
-                        Alert.alert("Message", `Send a message to ${item.name}`)
-                    }
+                    onPress={() => {
+                        Alert.alert(
+                            "Message",
+                            `Opening chat with ${item.name}`,
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                {
+                                    text: "Open Chat",
+                                    onPress: () => navigation.navigate("Messenger", { contactId: item._id })
+                                }
+                            ]
+                        );
+                    }}
                 >
                     <Ionicons
                         name="chatbubble-outline"
@@ -221,9 +230,7 @@ const FriendsScreen = ({ navigation }) => {
         <View style={styles.requestItem}>
             <TouchableOpacity
                 style={styles.requestProfile}
-                onPress={() =>
-                    navigation.navigate("UserProfile", { userId: item._id })
-                }
+                onPress={() => handleViewFriendProfile(item)}
             >
                 <Image
                     source={{
@@ -256,6 +263,43 @@ const FriendsScreen = ({ navigation }) => {
         </View>
     );
 
+    const renderSuggestedItem = ({ item }) => (
+        <View style={styles.requestItem}>
+            <TouchableOpacity
+                style={styles.requestProfile}
+                onPress={() => handleViewFriendProfile(item)}
+            >
+                <Image
+                    source={{
+                        uri: item.profilePicture || DEFAULT_PROFILE_IMAGE,
+                    }}
+                    style={styles.profilePic}
+                />
+                <View style={styles.friendInfo}>
+                    <Text style={styles.friendName}>{item.name}</Text>
+                    <Text style={styles.mutualFriends}>
+                        {item.mutualFriends} mutual friends
+                    </Text>
+                </View>
+            </TouchableOpacity>
+
+            <View style={styles.requestActions}>
+                <TouchableOpacity
+                    style={[styles.requestButton, styles.acceptButton]}
+                    onPress={() => handleSendFriendRequest(item._id)}
+                >
+                    <Text style={styles.acceptButtonText}>Add Friend</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.requestButton, styles.rejectButton]}
+                    onPress={() => setSuggestedFriends(suggestedFriends.filter(f => f._id !== item._id))}
+                >
+                    <Text style={styles.rejectButtonText}>Remove</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -281,6 +325,7 @@ const FriendsScreen = ({ navigation }) => {
                         placeholder="Search friends"
                         value={searchText}
                         onChangeText={setSearchText}
+                        autoFocus
                     />
                     {searchText.length > 0 && (
                         <TouchableOpacity
@@ -336,6 +381,22 @@ const FriendsScreen = ({ navigation }) => {
                         )}
                     </Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                    style={[
+                        styles.tab,
+                        activeTab === "suggested" && styles.activeTab,
+                    ]}
+                    onPress={() => setActiveTab("suggested")}
+                >
+                    <Text
+                        style={[
+                            styles.tabText,
+                            activeTab === "suggested" && styles.activeTabText,
+                        ]}
+                    >
+                        Suggested
+                    </Text>
+                </TouchableOpacity>
             </View>
 
             {loading ? (
@@ -344,12 +405,20 @@ const FriendsScreen = ({ navigation }) => {
                 </View>
             ) : (
                 <FlatList
-                    data={activeTab === "friends" ? friends : friendRequests}
+                    data={
+                        activeTab === "friends"
+                            ? filteredFriends
+                            : activeTab === "requests"
+                                ? filteredRequests
+                                : filteredSuggestions
+                    }
                     keyExtractor={(item) => item._id}
                     renderItem={
                         activeTab === "friends"
                             ? renderFriendItem
-                            : renderRequestItem
+                            : activeTab === "requests"
+                                ? renderRequestItem
+                                : renderSuggestedItem
                     }
                     ListHeaderComponent={
                         activeTab === "friends" && (
@@ -376,17 +445,34 @@ const FriendsScreen = ({ navigation }) => {
                                 name={
                                     activeTab === "friends"
                                         ? "people"
-                                        : "person-add"
+                                        : activeTab === "requests"
+                                            ? "person-add"
+                                            : "search"
                                 }
                                 size={50}
                                 color="#CCD0D5"
                             />
+                            <Text style={styles.emptyTitle}>
+                                {activeTab === "friends"
+                                    ? "No Friends Found"
+                                    : activeTab === "requests"
+                                        ? "No Friend Requests"
+                                        : "No Suggestions Found"}
+                            </Text>
                             <Text style={styles.emptyText}>
                                 {activeTab === "friends"
-                                    ? "You don't have any friends yet"
-                                    : "You don't have any friend requests"}
+                                    ? searchText
+                                        ? `No friends matching "${searchText}"`
+                                        : "You don't have any friends yet"
+                                    : activeTab === "requests"
+                                        ? searchText
+                                            ? `No requests matching "${searchText}"`
+                                            : "You don't have any friend requests"
+                                        : searchText
+                                            ? `No suggestions matching "${searchText}"`
+                                            : "We don't have any friend suggestions for you right now"}
                             </Text>
-                            {activeTab === "friends" && (
+                            {activeTab === "friends" && !searchText && (
                                 <TouchableOpacity
                                     style={styles.emptyButton}
                                     onPress={handleAddFriend}
@@ -396,10 +482,109 @@ const FriendsScreen = ({ navigation }) => {
                                     </Text>
                                 </TouchableOpacity>
                             )}
+                            {searchText && (
+                                <TouchableOpacity
+                                    style={styles.emptyButton}
+                                    onPress={() => setSearchText("")}
+                                >
+                                    <Text style={styles.emptyButtonText}>
+                                        Clear Search
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     }
                 />
             )}
+
+            {/* Friend Profile Modal */}
+            <Modal
+                visible={showProfileModal}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setShowProfileModal(false)}
+            >
+                {selectedFriend && (
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <View style={styles.modalHeader}>
+                                <Text style={styles.modalTitle}>{selectedFriend.name}</Text>
+                                <TouchableOpacity
+                                    onPress={() => setShowProfileModal(false)}
+                                    style={styles.closeButton}
+                                >
+                                    <Ionicons name="close" size={24} color="#65676B" />
+                                </TouchableOpacity>
+                            </View>
+
+                            <ScrollView style={styles.modalBody}>
+                                <View style={styles.profileImageContainer}>
+                                    <Image
+                                        source={{ uri: selectedFriend.profilePicture || DEFAULT_PROFILE_IMAGE }}
+                                        style={styles.profileImage}
+                                    />
+                                </View>
+
+                                <View style={styles.profileInfo}>
+                                    <View style={styles.infoItem}>
+                                        <Ionicons name="location" size={20} color="#65676B" />
+                                        <Text style={styles.infoText}>Lives in {selectedFriend.location}</Text>
+                                    </View>
+
+                                    <View style={styles.infoItem}>
+                                        <Ionicons name="briefcase" size={20} color="#65676B" />
+                                        <Text style={styles.infoText}>{selectedFriend.occupation}</Text>
+                                    </View>
+
+                                    <View style={styles.infoItem}>
+                                        <Ionicons name="school" size={20} color="#65676B" />
+                                        <Text style={styles.infoText}>{selectedFriend.education}</Text>
+                                    </View>
+
+                                    <View style={styles.infoItem}>
+                                        <Ionicons name="people" size={20} color="#65676B" />
+                                        <Text style={styles.infoText}>{selectedFriend.mutualFriends} mutual friends</Text>
+                                    </View>
+                                </View>
+
+                                <View style={styles.actionButtonsContainer}>
+                                    <TouchableOpacity
+                                        style={styles.profileActionButton}
+                                        onPress={() => {
+                                            setShowProfileModal(false);
+                                            navigation.navigate("UserProfile", { userId: selectedFriend._id });
+                                        }}
+                                    >
+                                        <Ionicons name="person" size={20} color="#fff" />
+                                        <Text style={styles.profileActionText}>View Profile</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        style={styles.profileActionButton}
+                                        onPress={() => {
+                                            setShowProfileModal(false);
+                                            navigation.navigate("Messenger", { contactId: selectedFriend._id });
+                                        }}
+                                    >
+                                        <Ionicons name="chatbubble" size={20} color="#fff" />
+                                        <Text style={styles.profileActionText}>Message</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        style={[styles.profileActionButton, styles.removeButton]}
+                                        onPress={() => {
+                                            handleRemoveFriend(selectedFriend._id);
+                                        }}
+                                    >
+                                        <Ionicons name="person-remove" size={20} color="#fff" />
+                                        <Text style={styles.profileActionText}>Remove</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </ScrollView>
+                        </View>
+                    </View>
+                )}
+            </Modal>
         </View>
     );
 };
@@ -488,12 +673,21 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         padding: 50,
+        marginTop: 30,
+    },
+    emptyTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#1c1e21",
+        marginTop: 10,
+        marginBottom: 8,
     },
     emptyText: {
         fontSize: 16,
         color: "#65676B",
         textAlign: "center",
         marginTop: 10,
+        marginBottom: 15,
     },
     emptyButton: {
         backgroundColor: "#1877F2",
@@ -628,6 +822,83 @@ const styles = StyleSheet.create({
     rejectButtonText: {
         color: "#1c1e21",
         fontWeight: "500",
+    },
+    modalContainer: {
+        flex: 1,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        justifyContent: "flex-end",
+    },
+    modalContent: {
+        backgroundColor: "#fff",
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        height: "80%",
+    },
+    modalHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: "#E4E6EB",
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#1c1e21",
+    },
+    closeButton: {
+        padding: 5,
+    },
+    modalBody: {
+        flex: 1,
+    },
+    profileImageContainer: {
+        alignItems: "center",
+        paddingVertical: 20,
+    },
+    profileImage: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+    },
+    profileInfo: {
+        padding: 15,
+    },
+    infoItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 15,
+    },
+    infoText: {
+        fontSize: 16,
+        color: "#1c1e21",
+        marginLeft: 10,
+    },
+    actionButtonsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        padding: 15,
+        borderTopWidth: 1,
+        borderTopColor: "#E4E6EB",
+    },
+    profileActionButton: {
+        backgroundColor: "#1877F2",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        borderRadius: 6,
+        minWidth: 100,
+    },
+    profileActionText: {
+        color: "#fff",
+        fontWeight: "500",
+        marginLeft: 5,
+    },
+    removeButton: {
+        backgroundColor: "#FA383E",
     },
 });
 
