@@ -6,6 +6,7 @@ import {
     FlatList,
     TouchableOpacity,
     Image,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -42,7 +43,16 @@ const EventsScreen = ({ navigation }) => {
     ];
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={styles.eventCard}>
+        <TouchableOpacity
+            style={styles.eventCard}
+            onPress={() =>
+                Alert.alert(
+                    item.title,
+                    `${item.date}\n${item.location}\n\n${item.going} people going • ${item.interested} interested`,
+                    [{ text: "OK" }]
+                )
+            }
+        >
             <Image source={{ uri: item.image }} style={styles.eventImage} />
             <View style={styles.eventContent}>
                 <Text style={styles.eventTitle}>{item.title}</Text>
@@ -54,7 +64,19 @@ const EventsScreen = ({ navigation }) => {
                     </Text>
                 </View>
                 <View style={styles.eventActions}>
-                    <TouchableOpacity style={styles.eventButton}>
+                    <TouchableOpacity
+                        style={styles.eventButton}
+                        onPress={() =>
+                            Alert.alert(
+                                "Going",
+                                `Mark that you're attending ${item.title}`,
+                                [
+                                    { text: "Cancel", style: "cancel" },
+                                    { text: "Confirm" },
+                                ]
+                            )
+                        }
+                    >
                         <Ionicons
                             name="checkmark-circle"
                             size={18}
@@ -62,7 +84,19 @@ const EventsScreen = ({ navigation }) => {
                         />
                         <Text style={styles.eventButtonText}>Going</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.eventButton}>
+                    <TouchableOpacity
+                        style={styles.eventButton}
+                        onPress={() =>
+                            Alert.alert(
+                                "Interested",
+                                `Mark that you're interested in ${item.title}`,
+                                [
+                                    { text: "Cancel", style: "cancel" },
+                                    { text: "Confirm" },
+                                ]
+                            )
+                        }
+                    >
                         <Ionicons name="star" size={18} color="#1877F2" />
                         <Text style={styles.eventButtonText}>Interested</Text>
                     </TouchableOpacity>
@@ -78,29 +112,78 @@ const EventsScreen = ({ navigation }) => {
                     <Ionicons name="arrow-back" size={24} color="#1877F2" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Events</Text>
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() =>
+                        Alert.alert(
+                            "Search Events",
+                            "Search for events by name, location, or date",
+                            [{ text: "OK" }]
+                        )
+                    }
+                >
                     <Ionicons name="search" size={24} color="#1877F2" />
                 </TouchableOpacity>
             </View>
 
             <View style={styles.tabs}>
-                <TouchableOpacity style={[styles.tab, styles.activeTab]}>
+                <TouchableOpacity
+                    style={[styles.tab, styles.activeTab]}
+                    onPress={() =>
+                        Alert.alert(
+                            "For You",
+                            "Showing events recommended for you"
+                        )
+                    }
+                >
                     <Text style={[styles.tabText, styles.activeTabText]}>
                         For You
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.tab}>
+                <TouchableOpacity
+                    style={styles.tab}
+                    onPress={() =>
+                        Alert.alert("Going", "Showing events you're attending")
+                    }
+                >
                     <Text style={styles.tabText}>Going</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.tab}>
+                <TouchableOpacity
+                    style={styles.tab}
+                    onPress={() =>
+                        Alert.alert(
+                            "Interested",
+                            "Showing events you're interested in"
+                        )
+                    }
+                >
                     <Text style={styles.tabText}>Interested</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.tab}>
+                <TouchableOpacity
+                    style={styles.tab}
+                    onPress={() =>
+                        Alert.alert(
+                            "Past",
+                            "Showing events that have already happened"
+                        )
+                    }
+                >
                     <Text style={styles.tabText}>Past</Text>
                 </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.createEventButton}>
+            <TouchableOpacity
+                style={styles.createEventButton}
+                onPress={() =>
+                    Alert.alert(
+                        "Create New Event",
+                        "Create and share an event with your friends",
+                        [
+                            { text: "Cancel", style: "cancel" },
+                            { text: "Create" },
+                        ]
+                    )
+                }
+            >
                 <Ionicons name="add-circle" size={24} color="#1877F2" />
                 <Text style={styles.createEventText}>Create New Event</Text>
             </TouchableOpacity>

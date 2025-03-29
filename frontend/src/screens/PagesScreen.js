@@ -6,6 +6,7 @@ import {
     FlatList,
     TouchableOpacity,
     Image,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -47,7 +48,16 @@ const PagesScreen = ({ navigation }) => {
     ];
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={styles.pageItem}>
+        <TouchableOpacity
+            style={styles.pageItem}
+            onPress={() =>
+                Alert.alert(
+                    item.name,
+                    `${item.category} • ${item.followers}\n\nView this page's content`,
+                    [{ text: "OK" }]
+                )
+            }
+        >
             <Image source={{ uri: item.image }} style={styles.pageImage} />
             <View style={styles.pageInfo}>
                 <Text style={styles.pageName}>{item.name}</Text>
@@ -59,6 +69,18 @@ const PagesScreen = ({ navigation }) => {
                     styles.likeButton,
                     item.isLiked ? styles.likedButton : {},
                 ]}
+                onPress={() =>
+                    Alert.alert(
+                        item.isLiked ? "Unlike Page" : "Like Page",
+                        item.isLiked
+                            ? `Remove your like from ${item.name}?`
+                            : `Like ${item.name} page`,
+                        [
+                            { text: "Cancel", style: "cancel" },
+                            { text: item.isLiked ? "Unlike" : "Like" },
+                        ]
+                    )
+                }
             >
                 <Ionicons
                     name={item.isLiked ? "thumbs-up" : "thumbs-up-outline"}
@@ -84,26 +106,64 @@ const PagesScreen = ({ navigation }) => {
                     <Ionicons name="arrow-back" size={24} color="#1877F2" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Pages</Text>
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() =>
+                        Alert.alert(
+                            "Search Pages",
+                            "Search for pages by name or category",
+                            [{ text: "OK" }]
+                        )
+                    }
+                >
                     <Ionicons name="search" size={24} color="#1877F2" />
                 </TouchableOpacity>
             </View>
 
             <View style={styles.tabs}>
-                <TouchableOpacity style={[styles.tab, styles.activeTab]}>
+                <TouchableOpacity
+                    style={[styles.tab, styles.activeTab]}
+                    onPress={() =>
+                        Alert.alert("Your Pages", "View pages you manage")
+                    }
+                >
                     <Text style={[styles.tabText, styles.activeTabText]}>
                         Your Pages
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.tab}>
+                <TouchableOpacity
+                    style={styles.tab}
+                    onPress={() =>
+                        Alert.alert(
+                            "Discover Pages",
+                            "Find new pages to follow"
+                        )
+                    }
+                >
                     <Text style={styles.tabText}>Discover</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.tab}>
+                <TouchableOpacity
+                    style={styles.tab}
+                    onPress={() =>
+                        Alert.alert("Liked Pages", "View pages you've liked")
+                    }
+                >
                     <Text style={styles.tabText}>Liked</Text>
                 </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.createPageButton}>
+            <TouchableOpacity
+                style={styles.createPageButton}
+                onPress={() =>
+                    Alert.alert(
+                        "Create New Page",
+                        "Create a page for your business, brand, or organization",
+                        [
+                            { text: "Cancel", style: "cancel" },
+                            { text: "Create" },
+                        ]
+                    )
+                }
+            >
                 <Ionicons name="add-circle" size={24} color="#1877F2" />
                 <Text style={styles.createPageText}>Create New Page</Text>
             </TouchableOpacity>

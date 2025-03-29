@@ -182,7 +182,19 @@ const MarketplaceScreen = ({ navigation }) => {
                 </ScrollView>
             </View>
 
-            <TouchableOpacity style={styles.sellButton}>
+            <TouchableOpacity
+                style={styles.sellButton}
+                onPress={() =>
+                    Alert.alert(
+                        "Sell Something",
+                        "Create a new listing to sell an item",
+                        [
+                            { text: "Cancel", style: "cancel" },
+                            { text: "Create Listing" },
+                        ]
+                    )
+                }
+            >
                 <Ionicons name="add-circle" size={24} color="#1877F2" />
                 <Text style={styles.sellButtonText}>Sell Something</Text>
             </TouchableOpacity>
