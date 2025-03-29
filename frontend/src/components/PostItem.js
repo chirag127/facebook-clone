@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image,
+    TouchableOpacity,
+    Alert,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { DEFAULT_PROFILE_IMAGE } from "../utils/constants";
 
@@ -58,7 +65,26 @@ const PostItem = ({
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.moreButton}>
+                <TouchableOpacity
+                    style={styles.moreButton}
+                    onPress={() => {
+                        Alert.alert("Post Options", "Choose an action", [
+                            {
+                                text: "Save Post",
+                                onPress: () => console.log("Post saved"),
+                            },
+                            {
+                                text: "Report Post",
+                                onPress: () => console.log("Post reported"),
+                            },
+                            {
+                                text: "Hide Post",
+                                onPress: () => console.log("Post hidden"),
+                            },
+                            { text: "Cancel", style: "cancel" },
+                        ]);
+                    }}
+                >
                     <Ionicons
                         name="ellipsis-horizontal"
                         size={20}
@@ -84,7 +110,7 @@ const PostItem = ({
                     </View>
                     <Text style={styles.statsText}>{post.likes.length}</Text>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={onComment}>
                     <Text style={styles.statsText}>
                         {post.comments.length} comments
                     </Text>
@@ -125,7 +151,34 @@ const PostItem = ({
                     <Text style={styles.actionText}>Comment</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() => {
+                        Alert.alert(
+                            "Share Post",
+                            "Share this post with friends",
+                            [
+                                {
+                                    text: "Share Now",
+                                    onPress: () => console.log("Post shared"),
+                                },
+                                {
+                                    text: "Write Post",
+                                    onPress: () =>
+                                        console.log(
+                                            "Write post with shared content"
+                                        ),
+                                },
+                                {
+                                    text: "Share to Messenger",
+                                    onPress: () =>
+                                        console.log("Share to Messenger"),
+                                },
+                                { text: "Cancel", style: "cancel" },
+                            ]
+                        );
+                    }}
+                >
                     <Ionicons
                         name="share-social-outline"
                         size={22}

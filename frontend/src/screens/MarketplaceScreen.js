@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 const MarketplaceScreen = ({ navigation }) => {
+    const [selectedCategory, setSelectedCategory] = useState("all");
     // Placeholder data for marketplace items
     const marketItems = [
         {
@@ -126,58 +127,112 @@ const MarketplaceScreen = ({ navigation }) => {
                     contentContainerStyle={styles.categoriesContent}
                 >
                     <TouchableOpacity
-                        style={styles.categoryButton}
-                        onPress={() =>
-                            Alert.alert(
-                                "All Categories",
-                                "Showing all marketplace items"
-                            )
-                        }
+                        style={[
+                            styles.categoryButton,
+                            selectedCategory === "all" &&
+                                styles.selectedCategory,
+                        ]}
+                        onPress={() => setSelectedCategory("all")}
                     >
-                        <Text style={styles.categoryText}>All</Text>
+                        <Text
+                            style={[
+                                styles.categoryText,
+                                selectedCategory === "all" &&
+                                    styles.selectedCategoryText,
+                            ]}
+                        >
+                            All
+                        </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.categoryButton}
-                        onPress={() =>
-                            Alert.alert(
-                                "Electronics",
-                                "Showing electronics items"
-                            )
-                        }
+                        style={[
+                            styles.categoryButton,
+                            selectedCategory === "electronics" &&
+                                styles.selectedCategory,
+                        ]}
+                        onPress={() => setSelectedCategory("electronics")}
                     >
-                        <Text style={styles.categoryText}>Electronics</Text>
+                        <Text
+                            style={[
+                                styles.categoryText,
+                                selectedCategory === "electronics" &&
+                                    styles.selectedCategoryText,
+                            ]}
+                        >
+                            Electronics
+                        </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.categoryButton}
-                        onPress={() =>
-                            Alert.alert("Furniture", "Showing furniture items")
-                        }
+                        style={[
+                            styles.categoryButton,
+                            selectedCategory === "furniture" &&
+                                styles.selectedCategory,
+                        ]}
+                        onPress={() => setSelectedCategory("furniture")}
                     >
-                        <Text style={styles.categoryText}>Furniture</Text>
+                        <Text
+                            style={[
+                                styles.categoryText,
+                                selectedCategory === "furniture" &&
+                                    styles.selectedCategoryText,
+                            ]}
+                        >
+                            Furniture
+                        </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.categoryButton}
-                        onPress={() =>
-                            Alert.alert("Clothing", "Showing clothing items")
-                        }
+                        style={[
+                            styles.categoryButton,
+                            selectedCategory === "clothing" &&
+                                styles.selectedCategory,
+                        ]}
+                        onPress={() => setSelectedCategory("clothing")}
                     >
-                        <Text style={styles.categoryText}>Clothing</Text>
+                        <Text
+                            style={[
+                                styles.categoryText,
+                                selectedCategory === "clothing" &&
+                                    styles.selectedCategoryText,
+                            ]}
+                        >
+                            Clothing
+                        </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.categoryButton}
-                        onPress={() =>
-                            Alert.alert("Vehicles", "Showing vehicle listings")
-                        }
+                        style={[
+                            styles.categoryButton,
+                            selectedCategory === "vehicles" &&
+                                styles.selectedCategory,
+                        ]}
+                        onPress={() => setSelectedCategory("vehicles")}
                     >
-                        <Text style={styles.categoryText}>Vehicles</Text>
+                        <Text
+                            style={[
+                                styles.categoryText,
+                                selectedCategory === "vehicles" &&
+                                    styles.selectedCategoryText,
+                            ]}
+                        >
+                            Vehicles
+                        </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.categoryButton}
-                        onPress={() =>
-                            Alert.alert("Property", "Showing property listings")
-                        }
+                        style={[
+                            styles.categoryButton,
+                            selectedCategory === "property" &&
+                                styles.selectedCategory,
+                        ]}
+                        onPress={() => setSelectedCategory("property")}
                     >
-                        <Text style={styles.categoryText}>Property</Text>
+                        <Text
+                            style={[
+                                styles.categoryText,
+                                selectedCategory === "property" &&
+                                    styles.selectedCategoryText,
+                            ]}
+                        >
+                            Property
+                        </Text>
                     </TouchableOpacity>
                 </ScrollView>
             </View>
@@ -190,7 +245,28 @@ const MarketplaceScreen = ({ navigation }) => {
                         "Create a new listing to sell an item",
                         [
                             { text: "Cancel", style: "cancel" },
-                            { text: "Create Listing" },
+                            {
+                                text: "Create Listing",
+                                onPress: () => {
+                                    // Using Alert.alert instead of Alert.prompt for cross-platform compatibility
+                                    Alert.alert(
+                                        "New Listing",
+                                        "Enter item details in the next screen",
+                                        [
+                                            { text: "Cancel", style: "cancel" },
+                                            {
+                                                text: "Next",
+                                                onPress: () => {
+                                                    Alert.alert(
+                                                        "Success",
+                                                        "Created new listing"
+                                                    );
+                                                },
+                                            },
+                                        ]
+                                    );
+                                },
+                            },
                         ]
                     )
                 }
@@ -211,6 +287,13 @@ const MarketplaceScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    selectedCategory: {
+        backgroundColor: "#E7F3FF",
+    },
+    selectedCategoryText: {
+        color: "#1877F2",
+        fontWeight: "bold",
+    },
     container: {
         flex: 1,
         backgroundColor: "#f0f2f5",

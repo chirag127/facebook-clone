@@ -11,15 +11,23 @@ import {
     Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { AuthContext } from "../context/AuthContext";
-import { getPosts, likePost, unlikePost } from "../api/api";
+import {
+    getPosts,
+    likePost,
+    unlikePost,
+    updateProfilePicture,
+    updateCoverPhoto,
+} from "../api/api";
 import PostItem from "../components/PostItem";
 
 const ProfileScreen = ({ navigation }) => {
-    const { userInfo, logout } = useContext(AuthContext);
+    const { userInfo, logout, setUserInfo } = useContext(AuthContext);
     const [userPosts, setUserPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("posts");
+    const [updating, setUpdating] = useState(false);
 
     useEffect(() => {
         fetchUserPosts();
@@ -53,6 +61,178 @@ const ProfileScreen = ({ navigation }) => {
         }
     };
 
+    const pickProfileImage = async () => {
+        try {
+            const permissionResult =
+                await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (permissionResult.granted === false) {
+                Alert.alert(
+                    "Permission Required",
+                    "You need to grant permission to access your photos"
+                );
+                return;
+            }
+
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 1,
+            });
+
+            if (!result.canceled) {
+                setUpdating(true);
+                try {
+                    await updateProfilePicture(result.assets[0].uri);
+                    // Update local user info
+                    setUserInfo({
+                        ...userInfo,
+                        profilePicture: result.assets[0].uri,
+                    });
+                    Alert.alert(
+                        "Success",
+                        "Profile picture updated successfully"
+                    );
+                } catch (error) {
+                    console.log("Error updating profile picture:", error);
+                    Alert.alert("Error", "Failed to update profile picture");
+                } finally {
+                    setUpdating(false);
+                }
+            }
+        } catch (error) {
+            console.log("Error picking image:", error);
+            Alert.alert("Error", "An error occurred while selecting the image");
+        }
+    };
+
+    const takeProfilePhoto = async () => {
+        try {
+            const permissionResult =
+                await ImagePicker.requestCameraPermissionsAsync();
+            if (permissionResult.granted === false) {
+                Alert.alert(
+                    "Permission Required",
+                    "You need to grant permission to access your camera"
+                );
+                return;
+            }
+
+            const result = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 1,
+            });
+
+            if (!result.canceled) {
+                setUpdating(true);
+                try {
+                    await updateProfilePicture(result.assets[0].uri);
+                    // Update local user info
+                    setUserInfo({
+                        ...userInfo,
+                        profilePicture: result.assets[0].uri,
+                    });
+                    Alert.alert(
+                        "Success",
+                        "Profile picture updated successfully"
+                    );
+                } catch (error) {
+                    console.log("Error updating profile picture:", error);
+                    Alert.alert("Error", "Failed to update profile picture");
+                } finally {
+                    setUpdating(false);
+                }
+            }
+        } catch (error) {
+            console.log("Error taking photo:", error);
+            Alert.alert("Error", "An error occurred while taking the photo");
+        }
+    };
+
+    const pickCoverPhoto = async () => {
+        try {
+            const permissionResult =
+                await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (permissionResult.granted === false) {
+                Alert.alert(
+                    "Permission Required",
+                    "You need to grant permission to access your photos"
+                );
+                return;
+            }
+
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [16, 9],
+                quality: 1,
+            });
+
+            if (!result.canceled) {
+                setUpdating(true);
+                try {
+                    await updateCoverPhoto(result.assets[0].uri);
+                    // Update local user info
+                    setUserInfo({
+                        ...userInfo,
+                        coverPhoto: result.assets[0].uri,
+                    });
+                    Alert.alert("Success", "Cover photo updated successfully");
+                } catch (error) {
+                    console.log("Error updating cover photo:", error);
+                    Alert.alert("Error", "Failed to update cover photo");
+                } finally {
+                    setUpdating(false);
+                }
+            }
+        } catch (error) {
+            console.log("Error picking image:", error);
+            Alert.alert("Error", "An error occurred while selecting the image");
+        }
+    };
+
+    const takeCoverPhoto = async () => {
+        try {
+            const permissionResult =
+                await ImagePicker.requestCameraPermissionsAsync();
+            if (permissionResult.granted === false) {
+                Alert.alert(
+                    "Permission Required",
+                    "You need to grant permission to access your camera"
+                );
+                return;
+            }
+
+            const result = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [16, 9],
+                quality: 1,
+            });
+
+            if (!result.canceled) {
+                setUpdating(true);
+                try {
+                    await updateCoverPhoto(result.assets[0].uri);
+                    // Update local user info
+                    setUserInfo({
+                        ...userInfo,
+                        coverPhoto: result.assets[0].uri,
+                    });
+                    Alert.alert("Success", "Cover photo updated successfully");
+                } catch (error) {
+                    console.log("Error updating cover photo:", error);
+                    Alert.alert("Error", "Failed to update cover photo");
+                } finally {
+                    setUpdating(false);
+                }
+            }
+        } catch (error) {
+            console.log("Error taking photo:", error);
+            Alert.alert("Error", "An error occurred while taking the photo");
+        }
+    };
+
     const ProfileHeader = () => (
         <View style={styles.profileHeader}>
             <View style={styles.coverPhotoContainer}>
@@ -72,8 +252,11 @@ const ProfileScreen = ({ navigation }) => {
                             "Update your cover photo",
                             [
                                 { text: "Cancel", style: "cancel" },
-                                { text: "Choose from Gallery" },
-                                { text: "Take Photo" },
+                                {
+                                    text: "Choose from Gallery",
+                                    onPress: pickCoverPhoto,
+                                },
+                                { text: "Take Photo", onPress: takeCoverPhoto },
                             ]
                         )
                     }
@@ -100,8 +283,14 @@ const ProfileScreen = ({ navigation }) => {
                                 "Update your profile picture",
                                 [
                                     { text: "Cancel", style: "cancel" },
-                                    { text: "Choose from Gallery" },
-                                    { text: "Take Photo" },
+                                    {
+                                        text: "Choose from Gallery",
+                                        onPress: pickProfileImage,
+                                    },
+                                    {
+                                        text: "Take Photo",
+                                        onPress: takeProfilePhoto,
+                                    },
                                 ]
                             )
                         }
@@ -388,6 +577,7 @@ const ProfileScreen = ({ navigation }) => {
                                 </Text>
                                 <TouchableOpacity
                                     style={styles.createPostButton}
+                                    onPress={() => navigation.navigate("Home")}
                                 >
                                     <Text style={styles.createPostText}>
                                         Create Post

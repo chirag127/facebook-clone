@@ -11,6 +11,7 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -154,24 +155,60 @@ const CreatePostModal = ({ visible, onClose, onCreatePost, user }) => {
                         >
                             <Ionicons name="images" size={24} color="#4CAF50" />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.optionButton}>
+                        <TouchableOpacity
+                            style={styles.optionButton}
+                            onPress={() =>
+                                Alert.alert(
+                                    "Tag People",
+                                    "Tag your friends in this post",
+                                    [{ text: "OK" }]
+                                )
+                            }
+                        >
                             <Ionicons
                                 name="person-add"
                                 size={24}
                                 color="#1877F2"
                             />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.optionButton}>
+                        <TouchableOpacity
+                            style={styles.optionButton}
+                            onPress={() =>
+                                Alert.alert(
+                                    "Feeling/Activity",
+                                    "Share how you're feeling or what you're doing",
+                                    [{ text: "OK" }]
+                                )
+                            }
+                        >
                             <Ionicons name="happy" size={24} color="#FFC107" />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.optionButton}>
+                        <TouchableOpacity
+                            style={styles.optionButton}
+                            onPress={() =>
+                                Alert.alert(
+                                    "Check In",
+                                    "Share your location in this post",
+                                    [{ text: "OK" }]
+                                )
+                            }
+                        >
                             <Ionicons
                                 name="location"
                                 size={24}
                                 color="#F44336"
                             />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.optionButton}>
+                        <TouchableOpacity
+                            style={styles.optionButton}
+                            onPress={() =>
+                                Alert.alert(
+                                    "Life Event",
+                                    "Share a life event in this post",
+                                    [{ text: "OK" }]
+                                )
+                            }
+                        >
                             <Ionicons name="flag" size={24} color="#9C27B0" />
                         </TouchableOpacity>
                     </View>

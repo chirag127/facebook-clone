@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     Image,
     ActivityIndicator,
+    Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../context/AuthContext";
@@ -155,7 +156,23 @@ const FriendsScreen = ({ navigation }) => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>Friends</Text>
-                <TouchableOpacity style={styles.searchButton}>
+                <TouchableOpacity
+                    style={styles.searchButton}
+                    onPress={() => {
+                        Alert.alert(
+                            "Search Friends",
+                            "Find friends by name or email",
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                {
+                                    text: "Search",
+                                    onPress: () =>
+                                        navigation.navigate("SearchUsers"),
+                                },
+                            ]
+                        );
+                    }}
+                >
                     <Ionicons name="search" size={22} color="#000" />
                 </TouchableOpacity>
             </View>

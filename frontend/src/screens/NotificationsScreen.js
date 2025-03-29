@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -75,6 +75,9 @@ const mockNotifications = [
 ];
 
 const NotificationsScreen = ({ navigation }) => {
+    const [filter, setFilter] = useState("all");
+    const [notifications, setNotifications] = useState(mockNotifications);
+
     const getNotificationIcon = (type) => {
         switch (type) {
             case "like":
@@ -158,15 +161,45 @@ const NotificationsScreen = ({ navigation }) => {
                 styles.notificationItem,
                 !item.read && styles.unreadNotification,
             ]}
-            onPress={() =>
-                Alert.alert(
-                    `${
-                        item.type.charAt(0).toUpperCase() + item.type.slice(1)
-                    } Notification`,
-                    `${item.user.name} ${item.content}`,
-                    [{ text: "OK" }]
-                )
-            }
+            onPress={() => {
+                // Mark notification as read
+                const updatedNotifications = notifications.map((notification) =>
+                    notification.id === item.id
+                        ? { ...notification, read: true }
+                        : notification
+                );
+                setNotifications(updatedNotifications);
+
+                // Navigate based on notification type
+                switch (item.type) {
+                    case "like":
+                    case "comment":
+                    case "tag":
+                        navigation.navigate("PostDetail", {
+                            postId: "mockPostId",
+                        });
+                        break;
+                    case "friend":
+                        navigation.navigate("UserProfile", {
+                            userId: item.user.id,
+                        });
+                        break;
+                    case "birthday":
+                        navigation.navigate("UserProfile", {
+                            userId: item.user.id,
+                        });
+                        break;
+                    default:
+                        Alert.alert(
+                            `${
+                                item.type.charAt(0).toUpperCase() +
+                                item.type.slice(1)
+                            } Notification`,
+                            `${item.user.name} ${item.content}`,
+                            [{ text: "OK" }]
+                        );
+                }
+            }}
         >
             <View style={styles.notificationContent}>
                 <View style={styles.profileContainer}>
@@ -229,32 +262,48 @@ const NotificationsScreen = ({ navigation }) => {
             </View>
 
             <FlatList
-                data={mockNotifications}
+                data={
+                    filter === "all"
+                        ? notifications
+                        : notifications.filter((item) => !item.read)
+                }
                 keyExtractor={(item) => item.id}
                 renderItem={renderNotificationItem}
                 ListHeaderComponent={
                     <View style={styles.filterContainer}>
                         <TouchableOpacity
-                            style={[styles.filterButton, styles.activeFilter]}
-                            onPress={() =>
-                                Alert.alert(
-                                    "All Notifications",
-                                    "Showing all notifications"
-                                )
-                            }
+                            style={[
+                                styles.filterButton,
+                                filter === "all" && styles.activeFilter,
+                            ]}
+                            onPress={() => setFilter("all")}
                         >
-                            <Text style={styles.activeFilterText}>All</Text>
+                            <Text
+                                style={
+                                    filter === "all"
+                                        ? styles.activeFilterText
+                                        : styles.filterText
+                                }
+                            >
+                                All
+                            </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={styles.filterButton}
-                            onPress={() =>
-                                Alert.alert(
-                                    "Unread Notifications",
-                                    "Showing only unread notifications"
-                                )
-                            }
+                            style={[
+                                styles.filterButton,
+                                filter === "unread" && styles.activeFilter,
+                            ]}
+                            onPress={() => setFilter("unread")}
                         >
-                            <Text style={styles.filterText}>Unread</Text>
+                            <Text
+                                style={
+                                    filter === "unread"
+                                        ? styles.activeFilterText
+                                        : styles.filterText
+                                }
+                            >
+                                Unread
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 }
