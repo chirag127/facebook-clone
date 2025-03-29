@@ -25,26 +25,26 @@ const MenuScreen = ({ navigation }) => {
                     id: "memories",
                     title: "Memories",
                     icon: "time-outline",
-            color: "#1877F2",
+                    color: "#1877F2",
                     onPress: () => navigation.navigate("Memories"),
-        },
-        {
-            id: "saved",
-            title: "Saved",
+                },
+                {
+                    id: "saved",
+                    title: "Saved",
                     icon: "bookmark-outline",
                     color: "#C837AB",
                     onPress: () => navigation.navigate("Saved"),
-        },
-        {
-            id: "groups",
-            title: "Groups",
+                },
+                {
+                    id: "groups",
+                    title: "Groups",
                     icon: "people-outline",
                     color: "#0BC6DF",
                     onPress: () => navigation.navigate("Groups"),
-        },
-        {
-            id: "marketplace",
-            title: "Marketplace",
+                },
+                {
+                    id: "marketplace",
+                    title: "Marketplace",
                     icon: "storefront-outline",
                     color: "#F5533D",
                     onPress: () => navigation.navigate("Marketplace"),
@@ -70,31 +70,37 @@ const MenuScreen = ({ navigation }) => {
                                 {
                                     text: "Most Recent",
                                     onPress: () => {
-                                        Alert.alert("Feed Preference", "Your feed will show most recent posts first");
+                                        Alert.alert(
+                                            "Feed Preference",
+                                            "Your feed will show most recent posts first"
+                                        );
                                         navigation.navigate("Home");
-                                    }
+                                    },
                                 },
                                 {
                                     text: "Favorites",
                                     onPress: () => {
-                                        Alert.alert("Feed Preference", "Your feed will show posts from favorites first");
+                                        Alert.alert(
+                                            "Feed Preference",
+                                            "Your feed will show posts from favorites first"
+                                        );
                                         navigation.navigate("Home");
-                                    }
-                                }
+                                    },
+                                },
                             ]
                         );
                     },
-        },
-        {
-            id: "pages",
-            title: "Pages",
+                },
+                {
+                    id: "pages",
+                    title: "Pages",
                     icon: "flag-outline",
                     color: "#F79D3B",
                     onPress: () => navigation.navigate("Pages"),
-        },
-        {
-            id: "events",
-            title: "Events",
+                },
+                {
+                    id: "events",
+                    title: "Events",
                     icon: "calendar-outline",
                     color: "#F02849",
                     onPress: () => navigation.navigate("Events"),
@@ -122,7 +128,9 @@ const MenuScreen = ({ navigation }) => {
                         setDarkMode(!darkMode);
                         Alert.alert(
                             "Dark Mode",
-                            darkMode ? "Dark mode disabled" : "Dark mode enabled",
+                            darkMode
+                                ? "Dark mode disabled"
+                                : "Dark mode enabled",
                             [{ text: "OK" }]
                         );
                     },
@@ -136,7 +144,13 @@ const MenuScreen = ({ navigation }) => {
                         Alert.alert(
                             "Activity Log",
                             "See your activity on Facebook, including posts you've shared, liked, and commented on.",
-                            [{ text: "View Activity", onPress: () => console.log("View activity") }, { text: "Cancel", style: "cancel" }]
+                            [
+                                {
+                                    text: "View Activity",
+                                    onPress: () => console.log("View activity"),
+                                },
+                                { text: "Cancel", style: "cancel" },
+                            ]
                         );
                     },
                 },
@@ -147,17 +161,26 @@ const MenuScreen = ({ navigation }) => {
                     color: "#65676B",
                     value: "English (US)",
                     onPress: () => {
-                        Alert.alert(
-                            "Language",
-                            "Choose your language",
-                            [
-                                { text: "Cancel", style: "cancel" },
-                                { text: "English (US)", onPress: () => console.log("Selected English") },
-                                { text: "Español", onPress: () => console.log("Selected Spanish") },
-                                { text: "Français", onPress: () => console.log("Selected French") },
-                                { text: "More...", onPress: () => console.log("View more languages") }
-                            ]
-                        );
+                        Alert.alert("Language", "Choose your language", [
+                            { text: "Cancel", style: "cancel" },
+                            {
+                                text: "English (US)",
+                                onPress: () => console.log("Selected English"),
+                            },
+                            {
+                                text: "Español",
+                                onPress: () => console.log("Selected Spanish"),
+                            },
+                            {
+                                text: "Français",
+                                onPress: () => console.log("Selected French"),
+                            },
+                            {
+                                text: "More...",
+                                onPress: () =>
+                                    console.log("View more languages"),
+                            },
+                        ]);
                     },
                 },
             ],
@@ -165,6 +188,26 @@ const MenuScreen = ({ navigation }) => {
         {
             title: "Help & Support",
             items: [
+                {
+                    id: "test_buttons",
+                    title: "Test Buttons",
+                    icon: "construct-outline",
+                    color: "#FF9500",
+                    onPress: () => {
+                        Alert.alert(
+                            "Test Buttons",
+                            "Opening the test buttons screen to verify button functionality",
+                            [
+                                {
+                                    text: "Open",
+                                    onPress: () =>
+                                        navigation.navigate("TestButtons"),
+                                },
+                                { text: "Cancel", style: "cancel" },
+                            ]
+                        );
+                    },
+                },
                 {
                     id: "help",
                     title: "Help Center",
@@ -190,7 +233,7 @@ const MenuScreen = ({ navigation }) => {
                                             "Report Submitted",
                                             "Thanks for your feedback. We'll look into this issue."
                                         );
-                                    }
+                                    },
                                 },
                                 {
                                     text: "Abusive Content",
@@ -199,7 +242,7 @@ const MenuScreen = ({ navigation }) => {
                                             "Report Submitted",
                                             "Thanks for letting us know about this content. We'll review it soon."
                                         );
-                                    }
+                                    },
                                 },
                                 {
                                     text: "Account Hacked",
@@ -208,7 +251,7 @@ const MenuScreen = ({ navigation }) => {
                                             "Secure Your Account",
                                             "We'll help you secure your account and report any unauthorized activity."
                                         );
-                                    }
+                                    },
                                 },
                             ]
                         );
@@ -224,8 +267,12 @@ const MenuScreen = ({ navigation }) => {
                             "Privacy Checkup",
                             "Review and strengthen your privacy settings",
                             [
-                                { text: "Start Checkup", onPress: () => console.log("Privacy checkup started") },
-                                { text: "Later", style: "cancel" }
+                                {
+                                    text: "Start Checkup",
+                                    onPress: () =>
+                                        console.log("Privacy checkup started"),
+                                },
+                                { text: "Later", style: "cancel" },
                             ]
                         );
                     },
@@ -241,9 +288,19 @@ const MenuScreen = ({ navigation }) => {
                             "View our terms of service and privacy policies",
                             [
                                 { text: "Cancel", style: "cancel" },
-                                { text: "Terms of Service", onPress: () => console.log("View terms") },
-                                { text: "Privacy Policy", onPress: () => console.log("View privacy") },
-                                { text: "Community Standards", onPress: () => console.log("View standards") }
+                                {
+                                    text: "Terms of Service",
+                                    onPress: () => console.log("View terms"),
+                                },
+                                {
+                                    text: "Privacy Policy",
+                                    onPress: () => console.log("View privacy"),
+                                },
+                                {
+                                    text: "Community Standards",
+                                    onPress: () =>
+                                        console.log("View standards"),
+                                },
                             ]
                         );
                     },
@@ -260,12 +317,12 @@ const MenuScreen = ({ navigation }) => {
             disabled={item.toggle}
         >
             <View style={styles.menuItemLeft}>
-            <View
+                <View
                     style={[
                         styles.iconContainer,
                         { backgroundColor: item.color + "20" }, // Adding 20% opacity
                     ]}
-            >
+                >
                     <Ionicons name={item.icon} size={24} color={item.color} />
                 </View>
                 <Text style={styles.menuItemText}>{item.title}</Text>
@@ -281,7 +338,11 @@ const MenuScreen = ({ navigation }) => {
             ) : item.value ? (
                 <View style={styles.menuItemRight}>
                     <Text style={styles.menuItemValue}>{item.value}</Text>
-                    <Ionicons name="chevron-forward" size={20} color="#65676B" />
+                    <Ionicons
+                        name="chevron-forward"
+                        size={20}
+                        color="#65676B"
+                    />
                 </View>
             ) : (
                 <Ionicons name="chevron-forward" size={20} color="#65676B" />
@@ -314,7 +375,9 @@ const MenuScreen = ({ navigation }) => {
                 >
                     <Image
                         source={{
-                            uri: userInfo?.profilePicture || DEFAULT_PROFILE_IMAGE,
+                            uri:
+                                userInfo?.profilePicture ||
+                                DEFAULT_PROFILE_IMAGE,
                         }}
                         style={styles.profileImage}
                     />
@@ -322,18 +385,26 @@ const MenuScreen = ({ navigation }) => {
                         <Text style={styles.profileName}>
                             {userInfo?.name || "User Name"}
                         </Text>
-                        <Text style={styles.viewProfile}>View your profile</Text>
+                        <Text style={styles.viewProfile}>
+                            View your profile
+                        </Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#65676B" />
+                    <Ionicons
+                        name="chevron-forward"
+                        size={20}
+                        color="#65676B"
+                    />
                 </TouchableOpacity>
 
                 {menuCategories.map((category) => (
                     <View key={category.title} style={styles.menuCategory}>
-                        <Text style={styles.categoryTitle}>{category.title}</Text>
+                        <Text style={styles.categoryTitle}>
+                            {category.title}
+                        </Text>
                         <View style={styles.categoryItems}>
                             {category.items.map(renderMenuItem)}
                         </View>
-                </View>
+                    </View>
                 ))}
 
                 <TouchableOpacity
@@ -349,8 +420,8 @@ const MenuScreen = ({ navigation }) => {
                                     style: "destructive",
                                     onPress: () => {
                                         navigation.navigate("Login");
-                                    }
-                                }
+                                    },
+                                },
                             ]
                         );
                     }}

@@ -28,6 +28,7 @@ import PagesScreen from "../screens/PagesScreen";
 import EventsScreen from "../screens/EventsScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import HelpScreen from "../screens/HelpScreen";
+import TestButtonScreen from "../screens/TestButtonScreen";
 
 // Context
 import { AuthContext } from "../context/AuthContext";
@@ -37,74 +38,78 @@ const Tab = createBottomTabNavigator();
 
 // Define linking configuration for deep links
 const linking = {
-  prefixes: ['https://fbclone.com', 'fbclone://'],
-  config: {
-    screens: {
-      Home: {
+    prefixes: ["https://fbclone.com", "fbclone://"],
+    config: {
         screens: {
-          HomeScreen: 'home',
-          PostDetail: {
-            path: 'post/:postId',
-            parse: {
-              postId: (postId) => postId,
+            Home: {
+                screens: {
+                    HomeScreen: "home",
+                    PostDetail: {
+                        path: "post/:postId",
+                        parse: {
+                            postId: (postId) => postId,
+                        },
+                    },
+                    UserProfile: {
+                        path: "user/:userId",
+                        parse: {
+                            userId: (userId) => userId,
+                        },
+                    },
+                },
             },
-          },
-          UserProfile: {
-            path: 'user/:userId',
-            parse: {
-              userId: (userId) => userId,
+            Profile: {
+                screens: {
+                    ProfileScreen: "profile",
+                    EditProfile: "profile/edit",
+                },
             },
-          },
+            Friends: "friends",
+            Notifications: "notifications",
+            Menu: {
+                screens: {
+                    MenuScreen: "menu",
+                    Saved: "saved",
+                    Groups: "groups",
+                    Marketplace: "marketplace",
+                    Memories: "memories",
+                    Pages: "pages",
+                    Events: "events",
+                    Settings: "settings",
+                    Help: "help",
+                    TestButtons: "test-buttons",
+                },
+            },
+            Login: "login",
+            Register: "register",
         },
-      },
-      Profile: {
-        screens: {
-          ProfileScreen: 'profile',
-          EditProfile: 'profile/edit',
-        },
-      },
-      Friends: 'friends',
-      Notifications: 'notifications',
-      Menu: {
-        screens: {
-          MenuScreen: 'menu',
-          Saved: 'saved',
-          Groups: 'groups',
-          Marketplace: 'marketplace',
-          Memories: 'memories',
-          Pages: 'pages',
-          Events: 'events',
-          Settings: 'settings',
-          Help: 'help',
-        },
-      },
-      Login: 'login',
-      Register: 'register',
     },
-  },
-  // Custom function to handle deep links outside of react-navigation
-  async getInitialURL() {
-    // First, check if the app was opened from a deep link
-    const url = await Linking.getInitialURL();
-    if (url != null) {
-      return url;
-    }
+    // Custom function to handle deep links outside of react-navigation
+    async getInitialURL() {
+        // First, check if the app was opened from a deep link
+        const url = await Linking.getInitialURL();
+        if (url != null) {
+            return url;
+        }
 
-    // Check for URL in the bundle URL
-    return null;
-  },
-  // Custom function to subscribe to incoming links
-  subscribe(listener) {
-    // Listen to incoming links
-    const linkingSubscription = Linking.addEventListener('url', ({ url }) => {
-      listener(url);
-    });
+        // Check for URL in the bundle URL
+        return null;
+    },
+    // Custom function to subscribe to incoming links
+    subscribe(listener) {
+        // Listen to incoming links
+        const linkingSubscription = Linking.addEventListener(
+            "url",
+            ({ url }) => {
+                listener(url);
+            }
+        );
 
-    return () => {
-      // Clean up subscription when the component is unmounted
-      linkingSubscription.remove();
-    };
-  },
+        return () => {
+            // Clean up subscription when the component is unmounted
+            linkingSubscription.remove();
+        };
+    },
 };
 
 const HomeStack = () => {
@@ -158,6 +163,7 @@ const MenuStack = () => {
             <Stack.Screen name="Events" component={EventsScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Help" component={HelpScreen} />
+            <Stack.Screen name="TestButtons" component={TestButtonScreen} />
         </Stack.Navigator>
     );
 };
