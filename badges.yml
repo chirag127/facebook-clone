@@ -1,0 +1,84 @@
+# badges.yml
+# Configuration for repository badges displayed in the README.
+# This file centralizes badge definitions for consistency and easy updates.
+
+# --- Status & Quality Badges ---
+# These badges reflect the current state of the repository, including build status,
+# code quality, and test coverage.
+status:
+  - name: "Build Status"
+    img_url: "https://img.shields.io/github/actions/workflow/status/chirag127/ConnectSphere-Social-Networking-React-Native-Engine/ci.yml?branch=main&style=flat-square&logo=github&logoColor=white"
+    target_url: "https://github.com/chirag127/ConnectSphere-Social-Networking-React-Native-Engine/actions/workflows/ci.yml"
+    markdown: "[
+![Build Status](https://img.shields.io/github/actions/workflow/status/chirag127/ConnectSphere-Social-Networking-React-Native-Engine/ci.yml?branch=main&style=flat-square&logo=github&logoColor=white)
+](https://github.com/chirag127/ConnectSphere-Social-Networking-React-Native-Engine/actions/workflows/ci.yml)"
+
+  - name: "Codecov"
+    img_url: "https://img.shields.io/codecov/c/github/chirag127/ConnectSphere-Social-Networking-React-Native-Engine?style=flat-square&logo=codecov&logoColor=white"
+    target_url: "https://codecov.io/gh/chirag127/ConnectSphere-Social-Networking-React-Native-Engine"
+    markdown: "[
+![Codecov](https://img.shields.io/codecov/c/github/chirag127/ConnectSphere-Social-Networking-React-Native-Engine?style=flat-square&logo=codecov&logoColor=white)
+](https://codecov.io/gh/chirag127/ConnectSphere-Social-Networking-React-Native-Engine)"
+
+# --- Technology Stack Badges ---
+# These badges identify the core technologies, languages, and frameworks used in the project.
+tech_stack:
+  - name: "React Native"
+    img_url: "https://img.shields.io/badge/React_Native-20232A?style=flat-square&logo=react&logoColor=61DAFB"
+    markdown: "
+![React Native](https://img.shields.io/badge/React_Native-20232A?style=flat-square&logo=react&logoColor=61DAFB)
+"
+
+  - name: "Node.js"
+    img_url: "https://img.shields.io/badge/Node.js-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white"
+    markdown: "
+![Node.js](https://img.shields.io/badge/Node.js-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white)
+"
+
+  - name: "Express"
+    img_url: "https://img.shields.io/badge/Express.js-000000?style=flat-square&logo=express&logoColor=white"
+    markdown: "
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=flat-square&logo=express&logoColor=white)
+"
+
+  - name: "MongoDB"
+    img_url: "https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white"
+    markdown: "
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)
+"
+
+  - name: "Expo"
+    img_url: "https://img.shields.io/badge/Expo-000020?style=flat-square&logo=expo&logoColor=white"
+    markdown: "
+![Expo](https://img.shields.io/badge/Expo-000020?style=flat-square&logo=expo&logoColor=white)
+"
+
+  - name: "JavaScript"
+    img_url: "https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black"
+    markdown: "
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+"
+
+  - name: "ESLint"
+    img_url: "https://img.shields.io/badge/Lint-ESLint-4B32C3?style=flat-square&logo=eslint"
+    markdown: "
+![ESLint](https://img.shields.io/badge/Lint-ESLint-4B32C3?style=flat-square&logo=eslint)
+"
+
+
+# --- Metadata & Social Badges ---
+# These badges provide metadata about the repository, such as licensing and community engagement.
+meta:
+  - name: "License"
+    img_url: "https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg?style=flat-square"
+    target_url: "https://github.com/chirag127/ConnectSphere-Social-Networking-React-Native-Engine/blob/main/LICENSE"
+    markdown: "[
+![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg?style=flat-square)
+](https://github.com/chirag127/ConnectSphere-Social-Networking-React-Native-Engine/blob/main/LICENSE)"
+
+  - name: "GitHub Stars"
+    img_url: "https://img.shields.io/github/stars/chirag127/ConnectSphere-Social-Networking-React-Native-Engine?style=flat-square&logo=github&logoColor=white"
+    target_url: "https://github.com/chirag127/ConnectSphere-Social-Networking-React-Native-Engine/stargazers"
+    markdown: "[
+![GitHub Stars](https://img.shields.io/github/stars/chirag127/ConnectSphere-Social-Networking-React-Native-Engine?style=flat-square&logo=github&logoColor=white)
+](https://github.com/chirag127/ConnectSphere-Social-Networking-React-Native-Engine/stargazers)"
